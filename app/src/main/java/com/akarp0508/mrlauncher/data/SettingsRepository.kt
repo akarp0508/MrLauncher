@@ -45,6 +45,9 @@ class SettingsRepository(private val context: Context) {
             homeIcons = this[HOME_ICONS].toEnumOrNull<IconMode>() ?: legacyIconMode(LEGACY_SHOW_HOME_ICONS) ?: defaults.homeIcons,
             drawerIcons = this[DRAWER_ICONS].toEnumOrNull<IconMode>() ?: legacyIconMode(LEGACY_SHOW_DRAWER_ICONS) ?: defaults.drawerIcons,
             showStatusBar = this[SHOW_STATUS_BAR] ?: defaults.showStatusBar,
+            homeSideMargin = this[HOME_SIDE_MARGIN] ?: defaults.homeSideMargin,
+            homeVerticalMargin = this[HOME_VERTICAL_MARGIN] ?: defaults.homeVerticalMargin,
+            drawerSideMargin = this[DRAWER_SIDE_MARGIN] ?: defaults.drawerSideMargin,
             drawerAlignment = this[DRAWER_ALIGNMENT].migrateAlignment().toEnum(defaults.drawerAlignment),
             autoLaunchSingleMatch = this[AUTO_LAUNCH] ?: defaults.autoLaunchSingleMatch,
             autoShowKeyboard = this[AUTO_KEYBOARD] ?: defaults.autoShowKeyboard,
@@ -95,6 +98,9 @@ class SettingsRepository(private val context: Context) {
         remove(LEGACY_SHOW_DRAWER_ICONS)
         remove(LEGACY_MONOCHROME_ICONS)
         this[SHOW_STATUS_BAR] = settings.showStatusBar
+        this[HOME_SIDE_MARGIN] = settings.homeSideMargin
+        this[HOME_VERTICAL_MARGIN] = settings.homeVerticalMargin
+        this[DRAWER_SIDE_MARGIN] = settings.drawerSideMargin
         this[DRAWER_ALIGNMENT] = settings.drawerAlignment.name
         this[AUTO_LAUNCH] = settings.autoLaunchSingleMatch
         this[AUTO_KEYBOARD] = settings.autoShowKeyboard
@@ -176,6 +182,9 @@ class SettingsRepository(private val context: Context) {
         val LEGACY_SHOW_DRAWER_ICONS = booleanPreferencesKey("show_drawer_icons")
         val LEGACY_MONOCHROME_ICONS = booleanPreferencesKey("monochrome_icons")
         val SHOW_STATUS_BAR = booleanPreferencesKey("show_status_bar")
+        val HOME_SIDE_MARGIN = intPreferencesKey("home_side_margin")
+        val HOME_VERTICAL_MARGIN = intPreferencesKey("home_vertical_margin")
+        val DRAWER_SIDE_MARGIN = intPreferencesKey("drawer_side_margin")
         val DRAWER_ALIGNMENT = stringPreferencesKey("drawer_alignment")
         val AUTO_LAUNCH = booleanPreferencesKey("auto_launch_single_match")
         val AUTO_KEYBOARD = booleanPreferencesKey("auto_show_keyboard")

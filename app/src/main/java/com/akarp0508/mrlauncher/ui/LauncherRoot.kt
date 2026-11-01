@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -100,6 +101,7 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     alignment = state.settings.drawerAlignment,
                     autoShowKeyboard = state.settings.autoShowKeyboard,
                 icons = state.settings.drawerIcons,
+                sideMargin = state.settings.drawerSideMargin.dp,
                 )
                 Screen.Settings -> SettingsScreen(
                     state = state,

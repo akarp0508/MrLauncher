@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.akarp0508.mrlauncher.R
@@ -71,7 +72,12 @@ class HomeEditor(
  * itself, so apps stay exactly where they'll end up.
  */
 @Composable
-internal fun EditToolbar(editor: HomeEditor, homeApps: List<AppInfo>, modifier: Modifier = Modifier) {
+internal fun EditToolbar(
+    editor: HomeEditor,
+    homeApps: List<AppInfo>,
+    sideMargin: Dp,
+    modifier: Modifier = Modifier,
+) {
     val colors = LauncherTheme.colors
     var addingApps by rememberSaveable { mutableStateOf(false) }
     Row(
@@ -79,8 +85,8 @@ internal fun EditToolbar(editor: HomeEditor, homeApps: List<AppInfo>, modifier: 
         modifier = modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .height(HomeVerticalPadding)
-            .padding(horizontal = HomeHorizontalPadding),
+            .height(MinEditTopMargin)
+            .padding(horizontal = sideMargin),
     ) {
         Text(
             text = stringResource(R.string.edit_home_hint),
@@ -128,6 +134,8 @@ internal fun EditableHomeApps(
     apps: List<AppInfo>,
     alignment: LabelAlignment,
     icons: IconMode,
+    /** Home side margin while editing; the drag and remove controls fill it. */
+    sideMargin: Dp,
     editor: HomeEditor,
 ) {
     val currentOnReorder by rememberUpdatedState(editor.onReorder)
@@ -174,7 +182,7 @@ internal fun EditableHomeApps(
                     contentAlignment = labelAlignment,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = HomeHorizontalPadding),
+                        .padding(horizontal = sideMargin),
                 ) {
                     AppLabel(
                         app = app,
@@ -190,6 +198,7 @@ internal fun EditableHomeApps(
                     MarginControl(
                         text = "≡",
                         description = reorderDescription,
+                        width = sideMargin,
                         modifier = Modifier.pointerInput(app.key) {
                             detectDragGestures(
                                 onDragStart = {
@@ -217,6 +226,7 @@ internal fun EditableHomeApps(
                     MarginControl(
                         text = "✕",
                         description = removeDescription,
+                        width = sideMargin,
                         modifier = Modifier.clickable { editor.onToggleApp(app) },
                     )
                 }
@@ -227,11 +237,11 @@ internal fun EditableHomeApps(
 
 /** A control filling one side margin of the home screen, as tall as its row. */
 @Composable
-private fun MarginControl(text: String, description: String, modifier: Modifier) {
+private fun MarginControl(text: String, description: String, width: Dp, modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .width(HomeHorizontalPadding)
+            .width(width)
             .fillMaxHeight()
             .semantics { contentDescription = description },
     ) {

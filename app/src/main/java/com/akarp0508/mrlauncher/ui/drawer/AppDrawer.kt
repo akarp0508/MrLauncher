@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.AppInfo
@@ -47,6 +48,7 @@ fun AppDrawer(
     alignment: LabelAlignment,
     autoShowKeyboard: Boolean,
     icons: IconMode,
+    sideMargin: Dp,
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -69,7 +71,7 @@ fun AppDrawer(
             .fillMaxSize()
             .systemBarsPadding()
             .imePadding()
-            .padding(horizontal = 32.dp),
+            .padding(horizontal = sideMargin),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 24.dp)) {
             BasicTextField(

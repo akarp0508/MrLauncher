@@ -100,9 +100,15 @@ data class LauncherSettings(
     val itemSpacing: ItemSpacing = ItemSpacing.Normal,
     val homeIcons: IconMode = IconMode.Off,
     val showStatusBar: Boolean = true,
+    /** In dp. */
+    val homeSideMargin: Int = 32,
+    /** Above the clock and below the last app, in dp. */
+    val homeVerticalMargin: Int = 48,
 
     // Drawer
     val drawerAlignment: LabelAlignment = LabelAlignment.Left,
+    /** In dp. */
+    val drawerSideMargin: Int = 32,
     val drawerIcons: IconMode = IconMode.Off,
     val autoLaunchSingleMatch: Boolean = true,
     val autoShowKeyboard: Boolean = true,

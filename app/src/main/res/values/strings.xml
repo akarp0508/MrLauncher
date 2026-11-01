@@ -48,6 +48,9 @@
     <string name="settings_home_position">App position</string>
     <string name="settings_item_spacing">Spacing</string>
     <string name="settings_status_bar">Status bar</string>
+    <string name="settings_side_margin">Side margin</string>
+    <string name="settings_vertical_margin">Top &amp; bottom margin</string>
+    <string name="margin_dp">%1$d dp</string>
     <string name="settings_app_icons">App icons</string>
     <string name="icons_color">Color</string>
     <string name="icons_monochrome">Monochrome</string>

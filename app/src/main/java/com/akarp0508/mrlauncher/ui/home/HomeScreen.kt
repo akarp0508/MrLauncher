@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.AppInfo
 import com.akarp0508.mrlauncher.data.DateStyle
@@ -37,9 +38,10 @@ import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
 import kotlinx.coroutines.delay
 import java.util.Date
 
-/** Side margins of the home screen; edit mode puts its controls inside them. */
-internal val HomeHorizontalPadding = 32.dp
-internal val HomeVerticalPadding = 48.dp
+// Edit mode puts its controls in the side margins and its toolbar in the top margin, so it needs
+// at least this much room; with smaller margins it shifts content in a little while editing.
+private val MinEditSideMargin = 28.dp
+internal val MinEditTopMargin = 48.dp
 
 /**
  * The home screen. With an [editor] it becomes edit mode: same layout, but gestures are off and
@@ -61,7 +63,10 @@ fun HomeScreen(
     val clockAlignment = settings.clockAlignment.horizontal
     val textAlign = settings.homeAlignment.textAlign
     val position = settings.homeVerticalPosition
-    val sidePadding = Modifier.padding(horizontal = HomeHorizontalPadding)
+    val sideMargin = settings.homeSideMargin.dp.let { if (editor != null) max(it, MinEditSideMargin) else it }
+    val verticalMargin = settings.homeVerticalMargin.dp
+    val topMargin = if (editor != null) max(verticalMargin, MinEditTopMargin) else verticalMargin
+    val sidePadding = Modifier.padding(horizontal = sideMargin)
 
     Box(Modifier.fillMaxSize()) {
         Column(
@@ -70,7 +75,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .then(if (editor == null) Modifier.homeGestures(onGesture, onLongPress = onEditHome) else Modifier)
                 .systemBarsPadding()
-                .padding(vertical = HomeVerticalPadding),
+                .padding(top = topMargin, bottom = verticalMargin),
         ) {
             Header(
                 showTime = settings.showClock,
@@ -88,7 +93,7 @@ fun HomeScreen(
 
             if (position == VerticalPosition.Top) Spacer(Modifier.height(48.dp)) else Spacer(Modifier.weight(1f))
             if (editor != null) {
-                EditableHomeApps(apps, settings.homeAlignment, settings.homeIcons, editor)
+                EditableHomeApps(apps, settings.homeAlignment, settings.homeIcons, sideMargin, editor)
             } else {
                 if (apps.isEmpty()) {
                     Text(
@@ -114,7 +119,7 @@ fun HomeScreen(
             if (position != VerticalPosition.Bottom) Spacer(Modifier.weight(1f))
         }
 
-        if (editor != null) EditToolbar(editor, apps, Modifier.align(Alignment.TopCenter))
+        if (editor != null) EditToolbar(editor, apps, sideMargin, Modifier.align(Alignment.TopCenter))
     }
 }
 

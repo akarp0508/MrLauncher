@@ -124,6 +124,16 @@ fun SettingsScreen(
             }
         }
         item {
+            MarginRow(R.string.settings_side_margin, settings.homeSideMargin, max = 64) { delta ->
+                onUpdate { it.copy(homeSideMargin = (it.homeSideMargin + delta).coerceIn(0, 64)) }
+            }
+        }
+        item {
+            MarginRow(R.string.settings_vertical_margin, settings.homeVerticalMargin, max = 96) { delta ->
+                onUpdate { it.copy(homeVerticalMargin = (it.homeVerticalMargin + delta).coerceIn(0, 96)) }
+            }
+        }
+        item {
             ToggleRow(R.string.settings_status_bar, settings.showStatusBar) {
                 onUpdate { it.copy(showStatusBar = !it.showStatusBar) }
             }
@@ -138,6 +148,11 @@ fun SettingsScreen(
         item {
             SettingRow(R.string.settings_app_icons, stringResource(settings.drawerIcons.label)) {
                 onUpdate { it.copy(drawerIcons = it.drawerIcons.next()) }
+            }
+        }
+        item {
+            MarginRow(R.string.settings_side_margin, settings.drawerSideMargin, max = 64) { delta ->
+                onUpdate { it.copy(drawerSideMargin = (it.drawerSideMargin + delta).coerceIn(0, 64)) }
             }
         }
         item {
@@ -409,6 +424,19 @@ private fun TextSizeRow(@StringRes title: Int, scale: Float, onStep: (delta: Flo
         onIncrease = { onStep(0.1f) },
     )
 }
+
+/** A margin stepper in [MARGIN_STEP] dp steps; [onStep] gets the signed step. */
+@Composable
+private fun MarginRow(@StringRes title: Int, value: Int, max: Int, onStep: (delta: Int) -> Unit) {
+    StepperRow(
+        title = title,
+        value = stringResource(R.string.margin_dp, value),
+        onDecrease = { if (value > 0) onStep(-MARGIN_STEP) },
+        onIncrease = { if (value < max) onStep(MARGIN_STEP) },
+    )
+}
+
+private const val MARGIN_STEP = 4
 
 /** Steps by [delta] and rounds to one decimal, so repeated taps don't drift (0.7999…). */
 private fun stepped(value: Float, delta: Float, min: Float, max: Float): Float =
