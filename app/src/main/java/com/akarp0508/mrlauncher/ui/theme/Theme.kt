@@ -81,7 +81,9 @@ private data class LauncherStyle(
     val colors: LauncherColors,
     val itemSpacing: Dp,
     val fontFamily: FontFamily,
-    val textScale: Float,
+    /** Text sizes are read from here when building styles. */
+    val settings: LauncherSettings,
+    val textStyles: LauncherTextStyles,
 )
 
 private val LocalLauncherStyle = staticCompositionLocalOf<LauncherStyle> {
@@ -96,6 +98,10 @@ object LauncherTheme {
     /** Vertical padding around each app label. */
     val itemSpacing: Dp
         @Composable @ReadOnlyComposable get() = LocalLauncherStyle.current.itemSpacing
+
+    /** Clock, date, home and drawer text; see [LauncherTextStyles]. */
+    val textStyles: LauncherTextStyles
+        @Composable @ReadOnlyComposable get() = LocalLauncherStyle.current.textStyles
 
     @Composable
     @ReadOnlyComposable
@@ -155,7 +161,14 @@ fun MrLauncherTheme(settings: LauncherSettings, content: @Composable () -> Unit)
     MaterialTheme(colorScheme = colorScheme, typography = typography) {
         CompositionLocalProvider(
             LocalContentColor provides dialog.text,
-            LocalLauncherStyle provides LauncherStyle(palette, dialog, itemSpacing, fontFamily, settings.textScale),
+            LocalLauncherStyle provides LauncherStyle(
+                palette = palette,
+                colors = dialog,
+                itemSpacing = itemSpacing,
+                fontFamily = fontFamily,
+                settings = settings,
+                textStyles = remember(fontFamily, settings) { launcherTextStyles(fontFamily, settings, shadowColor = null) },
+            ),
             content = content,
         )
     }
@@ -173,13 +186,16 @@ fun LauncherSurface(opacity: Float, modifier: Modifier = Modifier, content: @Com
     } else {
         null
     }
-    val typography = remember(style.fontFamily, style.textScale, shadowColor) {
-        launcherTypography(style.fontFamily, style.textScale, shadowColor)
+    val typography = remember(style.fontFamily, style.settings.textScale, shadowColor) {
+        launcherTypography(style.fontFamily, style.settings.textScale, shadowColor)
+    }
+    val textStyles = remember(style.fontFamily, style.settings, shadowColor) {
+        launcherTextStyles(style.fontFamily, style.settings, shadowColor)
     }
     MaterialTheme(colorScheme = MaterialTheme.colorScheme, typography = typography) {
         CompositionLocalProvider(
             LocalContentColor provides colors.text,
-            LocalLauncherStyle provides style.copy(colors = colors),
+            LocalLauncherStyle provides style.copy(colors = colors, textStyles = textStyles),
         ) {
             Box(modifier.fillMaxSize().background(colors.background)) { content() }
         }

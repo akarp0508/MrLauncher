@@ -86,7 +86,12 @@ data class LauncherSettings(
     // Look
     val font: FontChoice = FontChoice.System,
     val customFontPath: String? = null,
+    /** Menus, settings, dialogs and hints. */
     val textScale: Float = 1f,
+    val clockTextScale: Float = 1f,
+    val dateTextScale: Float = 1f,
+    val homeTextScale: Float = 1f,
+    val drawerTextScale: Float = 1f,
     /** ARGB, or [AUTO_TEXT_COLOR]. */
     val textColor: Int = AUTO_TEXT_COLOR,
     val accentColor: Int = 0xFFFFB86C.toInt(),

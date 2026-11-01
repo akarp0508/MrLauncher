@@ -45,6 +45,10 @@ class SettingsRepository(private val context: Context) {
             font = this[FONT].toEnum(defaults.font),
             customFontPath = this[CUSTOM_FONT_PATH],
             textScale = this[TEXT_SCALE] ?: defaults.textScale,
+            clockTextScale = this[CLOCK_TEXT_SCALE] ?: defaults.clockTextScale,
+            dateTextScale = this[DATE_TEXT_SCALE] ?: defaults.dateTextScale,
+            homeTextScale = this[HOME_TEXT_SCALE] ?: defaults.homeTextScale,
+            drawerTextScale = this[DRAWER_TEXT_SCALE] ?: defaults.drawerTextScale,
             textColor = this[TEXT_COLOR] ?: defaults.textColor,
             accentColor = this[ACCENT_COLOR] ?: defaults.accentColor,
             backgroundColor = this[BACKGROUND_COLOR] ?: defaults.backgroundColor,
@@ -79,6 +83,10 @@ class SettingsRepository(private val context: Context) {
         this[FONT] = settings.font.name
         setOrRemove(CUSTOM_FONT_PATH, settings.customFontPath)
         this[TEXT_SCALE] = settings.textScale
+        this[CLOCK_TEXT_SCALE] = settings.clockTextScale
+        this[DATE_TEXT_SCALE] = settings.dateTextScale
+        this[HOME_TEXT_SCALE] = settings.homeTextScale
+        this[DRAWER_TEXT_SCALE] = settings.drawerTextScale
         this[TEXT_COLOR] = settings.textColor
         this[ACCENT_COLOR] = settings.accentColor
         this[BACKGROUND_COLOR] = settings.backgroundColor
@@ -137,6 +145,10 @@ class SettingsRepository(private val context: Context) {
         val FONT = stringPreferencesKey("font")
         val CUSTOM_FONT_PATH = stringPreferencesKey("custom_font_path")
         val TEXT_SCALE = floatPreferencesKey("text_scale")
+        val CLOCK_TEXT_SCALE = floatPreferencesKey("clock_text_scale")
+        val DATE_TEXT_SCALE = floatPreferencesKey("date_text_scale")
+        val HOME_TEXT_SCALE = floatPreferencesKey("home_text_scale")
+        val DRAWER_TEXT_SCALE = floatPreferencesKey("drawer_text_scale")
         val TEXT_COLOR = intPreferencesKey("text_color")
         val ACCENT_COLOR = intPreferencesKey("accent_color")
         val BACKGROUND_COLOR = intPreferencesKey("background_color")

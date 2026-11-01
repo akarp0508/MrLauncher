@@ -74,7 +74,7 @@ fun AppDrawer(
                 value = query,
                 onValueChange = onQueryChange,
                 singleLine = true,
-                textStyle = MaterialTheme.typography.titleLarge.copy(color = colors.text),
+                textStyle = LauncherTheme.textStyles.drawerApp.copy(color = colors.text),
                 cursorBrush = SolidColor(colors.accent),
                 keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Go),
                 keyboardActions = KeyboardActions(onGo = { apps.firstOrNull()?.let(onAppClick) }),
@@ -82,7 +82,7 @@ fun AppDrawer(
                     if (query.isEmpty()) {
                         Text(
                             stringResource(R.string.drawer_search_hint),
-                            style = MaterialTheme.typography.titleLarge,
+                            style = LauncherTheme.textStyles.drawerApp,
                             color = colors.textDim,
                         )
                     }
@@ -121,7 +121,7 @@ fun AppDrawer(
             items(apps, key = { it.key }) { app ->
                 AppLabel(
                     app = app,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = LauncherTheme.textStyles.drawerApp,
                     onClick = { onAppClick(app) },
                     onLongClick = { onAppLongClick(app) },
                     textAlign = alignment.textAlign,

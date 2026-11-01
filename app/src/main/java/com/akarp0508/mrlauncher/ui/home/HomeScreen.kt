@@ -84,7 +84,7 @@ fun HomeScreen(
         apps.forEach { app ->
             AppLabel(
                 app = app,
-                style = MaterialTheme.typography.headlineSmall,
+                style = LauncherTheme.textStyles.homeApp,
                 textAlign = textAlign,
                 onClick = { onAppClick(app) },
                 onLongClick = { onAppLongClick(app) },
@@ -120,12 +120,12 @@ private fun Header(
 
     Column(horizontalAlignment = horizontalAlignment) {
         if (showTime) {
-            Text(time, style = MaterialTheme.typography.displayLarge, modifier = Modifier.clickable(onClick = onClockClick))
+            Text(time, style = LauncherTheme.textStyles.clock, modifier = Modifier.clickable(onClick = onClockClick))
         }
         if (showDate) {
             Text(
                 date,
-                style = MaterialTheme.typography.titleMedium,
+                style = LauncherTheme.textStyles.date,
                 color = dim,
                 modifier = Modifier.clickable(onClick = onDateClick),
             )
@@ -133,7 +133,7 @@ private fun Header(
         if (weather != null) {
             Text(
                 text = stringResource(R.string.weather_format, weather.temperature, stringResource(weatherDescription(weather.code))),
-                style = MaterialTheme.typography.titleMedium,
+                style = LauncherTheme.textStyles.date,
                 color = dim,
                 modifier = Modifier.clickable(onClick = onWeatherClick),
             )

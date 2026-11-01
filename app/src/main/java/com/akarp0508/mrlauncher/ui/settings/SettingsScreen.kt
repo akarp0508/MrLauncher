@@ -1,6 +1,7 @@
 package com.akarp0508.mrlauncher.ui.settings
 
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -129,14 +130,6 @@ fun SettingsScreen(
             )
         }
         item {
-            StepperRow(
-                title = R.string.settings_text_size,
-                value = stringResource(R.string.percent, (settings.textScale * 100).roundToInt()),
-                onDecrease = { onUpdate { it.copy(textScale = stepped(it.textScale, -0.1f, 0.7f, 1.6f)) } },
-                onIncrease = { onUpdate { it.copy(textScale = stepped(it.textScale, 0.1f, 0.7f, 1.6f)) } },
-            )
-        }
-        item {
             ColorRow(
                 title = R.string.settings_text_color,
                 selected = settings.textColor,
@@ -181,6 +174,34 @@ fun SettingsScreen(
                 onDecrease = { onUpdate { it.copy(drawerBackgroundAlpha = stepped(it.drawerBackgroundAlpha, -0.1f, 0f, 1f)) } },
                 onIncrease = { onUpdate { it.copy(drawerBackgroundAlpha = stepped(it.drawerBackgroundAlpha, 0.1f, 0f, 1f)) } },
             )
+        }
+
+        item { SectionHeader(R.string.settings_section_text_size) }
+        item {
+            TextSizeRow(R.string.settings_size_clock, settings.clockTextScale) { delta ->
+                onUpdate { it.copy(clockTextScale = stepped(it.clockTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
+            }
+        }
+        item {
+            TextSizeRow(R.string.settings_size_date, settings.dateTextScale) { delta ->
+                onUpdate { it.copy(dateTextScale = stepped(it.dateTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
+            }
+        }
+        item {
+            TextSizeRow(R.string.settings_size_home, settings.homeTextScale) { delta ->
+                onUpdate { it.copy(homeTextScale = stepped(it.homeTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
+            }
+        }
+        item {
+            TextSizeRow(R.string.settings_size_drawer, settings.drawerTextScale) { delta ->
+                onUpdate { it.copy(drawerTextScale = stepped(it.drawerTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
+            }
+        }
+        item {
+            // Capped lower than the rest: settings and dialogs stop fitting the screen beyond this.
+            TextSizeRow(R.string.settings_size_other, settings.textScale) { delta ->
+                onUpdate { it.copy(textScale = stepped(it.textScale, delta, MIN_TEXT_SCALE, 1.6f)) }
+            }
         }
 
         item { SectionHeader(R.string.settings_section_weather) }
@@ -300,6 +321,20 @@ fun SettingsScreen(
             onDismiss = { dialog = null },
         )
     }
+}
+
+private const val MIN_TEXT_SCALE = 0.5f
+private const val MAX_TEXT_SCALE = 2f
+
+/** A percentage stepper; [onStep] gets +0.1 or -0.1. */
+@Composable
+private fun TextSizeRow(@StringRes title: Int, scale: Float, onStep: (delta: Float) -> Unit) {
+    StepperRow(
+        title = title,
+        value = stringResource(R.string.percent, (scale * 100).roundToInt()),
+        onDecrease = { onStep(-0.1f) },
+        onIncrease = { onStep(0.1f) },
+    )
 }
 
 /** Steps by [delta] and rounds to one decimal, so repeated taps don't drift (0.7999…). */

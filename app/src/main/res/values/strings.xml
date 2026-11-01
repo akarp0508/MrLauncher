@@ -44,7 +44,12 @@
     <string name="settings_auto_launch">Launch single search match</string>
     <string name="settings_auto_keyboard">Open keyboard automatically</string>
     <string name="settings_font">Font</string>
-    <string name="settings_text_size">Text size</string>
+    <string name="settings_section_text_size">Text size</string>
+    <string name="settings_size_clock">Clock</string>
+    <string name="settings_size_date">Date &amp; weather</string>
+    <string name="settings_size_home">Home apps</string>
+    <string name="settings_size_drawer">App drawer</string>
+    <string name="settings_size_other">Menus &amp; settings</string>
     <string name="settings_text_color">Text color</string>
     <string name="settings_accent_color">Accent color</string>
     <string name="settings_background_color">Background color</string>
