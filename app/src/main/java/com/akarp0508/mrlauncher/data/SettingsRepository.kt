@@ -47,7 +47,9 @@ class SettingsRepository(private val context: Context) {
             textScale = this[TEXT_SCALE] ?: defaults.textScale,
             textColor = this[TEXT_COLOR] ?: defaults.textColor,
             accentColor = this[ACCENT_COLOR] ?: defaults.accentColor,
-            scrimAlpha = this[SCRIM_ALPHA] ?: defaults.scrimAlpha,
+            backgroundColor = this[BACKGROUND_COLOR] ?: defaults.backgroundColor,
+            homeBackgroundAlpha = this[HOME_BACKGROUND_ALPHA] ?: defaults.homeBackgroundAlpha,
+            drawerBackgroundAlpha = this[DRAWER_BACKGROUND_ALPHA] ?: defaults.drawerBackgroundAlpha,
             showWeather = this[SHOW_WEATHER] ?: defaults.showWeather,
             weatherLocation = if (weatherName != null && weatherLat != null && weatherLon != null) {
                 WeatherLocation(weatherName, weatherLat, weatherLon)
@@ -79,7 +81,9 @@ class SettingsRepository(private val context: Context) {
         this[TEXT_SCALE] = settings.textScale
         this[TEXT_COLOR] = settings.textColor
         this[ACCENT_COLOR] = settings.accentColor
-        this[SCRIM_ALPHA] = settings.scrimAlpha
+        this[BACKGROUND_COLOR] = settings.backgroundColor
+        this[HOME_BACKGROUND_ALPHA] = settings.homeBackgroundAlpha
+        this[DRAWER_BACKGROUND_ALPHA] = settings.drawerBackgroundAlpha
         this[SHOW_WEATHER] = settings.showWeather
         setOrRemove(WEATHER_NAME, settings.weatherLocation?.name)
         setOrRemove(WEATHER_LAT, settings.weatherLocation?.latitude)
@@ -135,7 +139,10 @@ class SettingsRepository(private val context: Context) {
         val TEXT_SCALE = floatPreferencesKey("text_scale")
         val TEXT_COLOR = intPreferencesKey("text_color")
         val ACCENT_COLOR = intPreferencesKey("accent_color")
-        val SCRIM_ALPHA = floatPreferencesKey("scrim_alpha")
+        val BACKGROUND_COLOR = intPreferencesKey("background_color")
+        val HOME_BACKGROUND_ALPHA = floatPreferencesKey("home_background_alpha")
+        // Old key name kept so the existing "background dim" value carries over.
+        val DRAWER_BACKGROUND_ALPHA = floatPreferencesKey("scrim_alpha")
         val SHOW_WEATHER = booleanPreferencesKey("show_weather")
         val WEATHER_NAME = stringPreferencesKey("weather_name")
         val WEATHER_LAT = doublePreferencesKey("weather_lat")

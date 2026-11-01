@@ -47,7 +47,9 @@
     <string name="settings_text_size">Text size</string>
     <string name="settings_text_color">Text color</string>
     <string name="settings_accent_color">Accent color</string>
-    <string name="settings_scrim">Background dim</string>
+    <string name="settings_background_color">Background color</string>
+    <string name="settings_home_background">Home background</string>
+    <string name="settings_drawer_background">Drawer background</string>
     <string name="settings_weather">Show weather</string>
     <string name="settings_weather_location">Location</string>
     <string name="settings_weather_location_none">Not set</string>

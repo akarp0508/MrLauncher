@@ -3,7 +3,6 @@ package com.akarp0508.mrlauncher.ui.settings
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,12 +30,12 @@ import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.data.WeatherLocation
 import com.akarp0508.mrlauncher.ui.LauncherUiState
 import com.akarp0508.mrlauncher.ui.theme.AccentColorPresets
-import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
+import com.akarp0508.mrlauncher.ui.theme.BackgroundColorPresets
 import com.akarp0508.mrlauncher.ui.theme.TextColorPresets
 import com.akarp0508.mrlauncher.ui.theme.fontFamilyFor
 import kotlin.math.roundToInt
 
-private enum class ColorTarget { Text, Accent }
+private enum class ColorTarget { Text, Accent, Background }
 
 private sealed interface SettingsDialog {
     data object Font : SettingsDialog
@@ -69,7 +68,6 @@ fun SettingsScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(LauncherTheme.colors.scrim)
             .systemBarsPadding()
             .padding(horizontal = 32.dp),
     ) {
@@ -159,11 +157,29 @@ fun SettingsScreen(
             )
         }
         item {
+            ColorRow(
+                title = R.string.settings_background_color,
+                selected = settings.backgroundColor,
+                presets = BackgroundColorPresets,
+                allowAuto = false,
+                onSelect = { color -> onUpdate { it.copy(backgroundColor = color) } },
+                onCustom = { dialog = SettingsDialog.CustomColor(ColorTarget.Background) },
+            )
+        }
+        item {
             StepperRow(
-                title = R.string.settings_scrim,
-                value = stringResource(R.string.percent, (settings.scrimAlpha * 100).roundToInt()),
-                onDecrease = { onUpdate { it.copy(scrimAlpha = stepped(it.scrimAlpha, -0.1f, 0f, 1f)) } },
-                onIncrease = { onUpdate { it.copy(scrimAlpha = stepped(it.scrimAlpha, 0.1f, 0f, 1f)) } },
+                title = R.string.settings_home_background,
+                value = stringResource(R.string.percent, (settings.homeBackgroundAlpha * 100).roundToInt()),
+                onDecrease = { onUpdate { it.copy(homeBackgroundAlpha = stepped(it.homeBackgroundAlpha, -0.1f, 0f, 1f)) } },
+                onIncrease = { onUpdate { it.copy(homeBackgroundAlpha = stepped(it.homeBackgroundAlpha, 0.1f, 0f, 1f)) } },
+            )
+        }
+        item {
+            StepperRow(
+                title = R.string.settings_drawer_background,
+                value = stringResource(R.string.percent, (settings.drawerBackgroundAlpha * 100).roundToInt()),
+                onDecrease = { onUpdate { it.copy(drawerBackgroundAlpha = stepped(it.drawerBackgroundAlpha, -0.1f, 0f, 1f)) } },
+                onIncrease = { onUpdate { it.copy(drawerBackgroundAlpha = stepped(it.drawerBackgroundAlpha, 0.1f, 0f, 1f)) } },
             )
         }
 
@@ -269,12 +285,14 @@ fun SettingsScreen(
             initial = when (current.target) {
                 ColorTarget.Text -> settings.textColor
                 ColorTarget.Accent -> settings.accentColor
+                ColorTarget.Background -> settings.backgroundColor
             },
             onPick = { color ->
                 onUpdate {
                     when (current.target) {
                         ColorTarget.Text -> it.copy(textColor = color)
                         ColorTarget.Accent -> it.copy(accentColor = color)
+                        ColorTarget.Background -> it.copy(backgroundColor = color)
                     }
                 }
                 dialog = null

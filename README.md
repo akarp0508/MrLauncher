@@ -13,7 +13,7 @@ MrLauncher is inspired mostly by [Olauncher](https://github.com/tanujnotes/Olaun
 - **Your apps, your names** — pin, reorder, rename and hide apps with a long-press; work profile apps are included
 - **Gestures** — swipe up/down/left/right, double tap, and tapping the clock or date can each open the drawer, notifications, quick settings, alarms, calendar, any app, or lock the screen
 - **Layout** — alignment for home and drawer, where the app list sits, spacing, text size, status bar on/off
-- **Colors** — text color (or *auto*, which picks light or dark text from your wallpaper), accent color, presets or any hex value, and how much to dim the wallpaper behind the drawer
+- **Colors** — text, accent and background colors from presets or any hex value; *auto* text picks light or dark based on what's behind it; separate background opacity for home and the drawer, from bare wallpaper to solid color
 - **Fonts** — any of Android's built-in fonts, or import your own `.ttf` / `.otf`
 - **Weather** — current conditions for a city you choose, from [Open-Meteo](https://open-meteo.com) (free, no account, no location permission)
 

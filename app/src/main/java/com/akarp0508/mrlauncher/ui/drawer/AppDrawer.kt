@@ -1,6 +1,5 @@
 package com.akarp0508.mrlauncher.ui.drawer
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -66,7 +65,6 @@ fun AppDrawer(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colors.scrim)
             .systemBarsPadding()
             .imePadding()
             .padding(horizontal = 32.dp),

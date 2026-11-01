@@ -90,8 +90,11 @@ data class LauncherSettings(
     /** ARGB, or [AUTO_TEXT_COLOR]. */
     val textColor: Int = AUTO_TEXT_COLOR,
     val accentColor: Int = 0xFFFFB86C.toInt(),
-    /** Opacity of the layer drawn over the wallpaper behind the drawer and settings. */
-    val scrimAlpha: Float = 0.65f,
+    /** Opaque ARGB; drawn over the wallpaper at the per-screen opacities below. */
+    val backgroundColor: Int = 0xFF000000.toInt(),
+    /** 0 = bare wallpaper, 1 = solid [backgroundColor]. */
+    val homeBackgroundAlpha: Float = 0f,
+    val drawerBackgroundAlpha: Float = 0.65f,
 
     // Weather
     val showWeather: Boolean = false,

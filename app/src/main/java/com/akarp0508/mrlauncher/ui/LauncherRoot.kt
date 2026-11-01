@@ -19,12 +19,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.akarp0508.mrlauncher.data.AppInfo
+import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.system.SystemActions
 import com.akarp0508.mrlauncher.ui.components.AppActionsDialog
 import com.akarp0508.mrlauncher.ui.components.RenameDialog
 import com.akarp0508.mrlauncher.ui.drawer.AppDrawer
 import com.akarp0508.mrlauncher.ui.home.HomeScreen
 import com.akarp0508.mrlauncher.ui.settings.SettingsScreen
+import com.akarp0508.mrlauncher.ui.theme.LauncherSurface
 import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
 import com.akarp0508.mrlauncher.ui.theme.MrLauncherTheme
 
@@ -35,7 +37,11 @@ fun LauncherRoot(viewModel: LauncherViewModel) {
     if (!state.isLoaded) return
 
     MrLauncherTheme(state.settings) {
-        SystemBarsEffect(darkIcons = LauncherTheme.colors.isDarkText, showStatusBar = state.settings.showStatusBar)
+        val opacity = state.settings.backgroundOpacity(state.screen)
+        SystemBarsEffect(
+            darkIcons = LauncherTheme.colorsFor(opacity).isDarkText,
+            showStatusBar = state.settings.showStatusBar,
+        )
         LauncherContent(state, viewModel)
     }
 }
@@ -54,34 +60,36 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
         transitionSpec = { fadeIn() togetherWith fadeOut() },
         label = "screen",
     ) { screen ->
-        when (screen) {
-            Screen.Home -> HomeScreen(
-                apps = state.homeApps,
-                weather = state.weather,
-                settings = state.settings,
-                onAppClick = viewModel::launch,
-                onAppLongClick = { actionsFor = it },
-                onGesture = viewModel::onGesture,
-                onWeatherClick = { viewModel.refreshWeather(force = true) },
-            )
-            Screen.Drawer -> AppDrawer(
-                apps = state.drawerApps,
-                query = state.query,
-                onQueryChange = viewModel::onQueryChange,
-                onAppClick = viewModel::launch,
-                onAppLongClick = { actionsFor = it },
-                onOpenSettings = viewModel::openSettings,
-                alignment = state.settings.drawerAlignment,
-                autoShowKeyboard = state.settings.autoShowKeyboard,
-            )
-            Screen.Settings -> SettingsScreen(
-                state = state,
-                onUpdate = viewModel::updateSettings,
-                onImportFont = viewModel::importFont,
-                searchWeatherLocations = viewModel::searchWeatherLocations,
-                onSetDefaultLauncher = { SystemActions.openDefaultLauncherSettings(context) },
-                onOpenAccessibilitySettings = { SystemActions.openAccessibilitySettings(context) },
-            )
+        LauncherSurface(opacity = state.settings.backgroundOpacity(screen)) {
+            when (screen) {
+                Screen.Home -> HomeScreen(
+                    apps = state.homeApps,
+                    weather = state.weather,
+                    settings = state.settings,
+                    onAppClick = viewModel::launch,
+                    onAppLongClick = { actionsFor = it },
+                    onGesture = viewModel::onGesture,
+                    onWeatherClick = { viewModel.refreshWeather(force = true) },
+                )
+                Screen.Drawer -> AppDrawer(
+                    apps = state.drawerApps,
+                    query = state.query,
+                    onQueryChange = viewModel::onQueryChange,
+                    onAppClick = viewModel::launch,
+                    onAppLongClick = { actionsFor = it },
+                    onOpenSettings = viewModel::openSettings,
+                    alignment = state.settings.drawerAlignment,
+                    autoShowKeyboard = state.settings.autoShowKeyboard,
+                )
+                Screen.Settings -> SettingsScreen(
+                    state = state,
+                    onUpdate = viewModel::updateSettings,
+                    onImportFont = viewModel::importFont,
+                    searchWeatherLocations = viewModel::searchWeatherLocations,
+                    onSetDefaultLauncher = { SystemActions.openDefaultLauncherSettings(context) },
+                    onOpenAccessibilitySettings = { SystemActions.openAccessibilitySettings(context) },
+                )
+            }
         }
     }
 
@@ -107,6 +115,11 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
             onDismiss = { renaming = null },
         )
     }
+}
+
+private fun LauncherSettings.backgroundOpacity(screen: Screen): Float = when (screen) {
+    Screen.Home -> homeBackgroundAlpha
+    Screen.Drawer, Screen.Settings -> drawerBackgroundAlpha
 }
 
 @Composable

@@ -35,9 +35,9 @@ private fun deviceFont(name: String) = FontFamily(Font(DeviceFontFamilyName(name
 //   displayLarge  - clock          titleMedium - date, weather
 //   headlineSmall - home app list  titleLarge  - drawer app list
 //   bodyLarge     - general text   labelLarge  - hints / secondary
-fun launcherTypography(fontFamily: FontFamily, scale: Float, shadowColor: Color): Typography {
-    // Soft shadow keeps text legible on busy wallpapers.
-    val shadow = Shadow(shadowColor, Offset(0f, 2f), blurRadius = 8f)
+/** [shadowColor] null means no shadow. */
+fun launcherTypography(fontFamily: FontFamily, scale: Float, shadowColor: Color?): Typography {
+    val shadow = shadowColor?.let { Shadow(it, Offset(0f, 2f), blurRadius = 8f) }
     fun style(size: Int, weight: FontWeight = FontWeight.Normal, spacing: Float = 0f) = TextStyle(
         fontFamily = fontFamily,
         fontWeight = weight,
