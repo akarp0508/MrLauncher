@@ -77,6 +77,8 @@
     <string name="settings_weather_location">Location</string>
     <string name="settings_weather_location_none">Not set</string>
     <string name="settings_weather_units">Units</string>
+    <string name="settings_weather_icon">Icon</string>
+    <string name="settings_date_format">Date format</string>
     <string name="settings_edit_home">Edit home screen</string>
     <string name="settings_default_launcher">Set as default launcher</string>
     <string name="settings_lock_service">Screen lock permission</string>

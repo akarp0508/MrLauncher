@@ -9,6 +9,16 @@ enum class ItemSpacing { Compact, Normal, Roomy }
 
 enum class IconMode { Off, Color, Monochrome }
 
+/** [skeleton] is a locale-independent date skeleton; the device locale decides order and punctuation. */
+enum class DateStyle(val skeleton: String) {
+    Full("EEEEdMMMM"),
+    Short("EEEdMMM"),
+    DayMonth("dMMMM"),
+    Weekday("EEEE"),
+    FullWithYear("dMMMMy"),
+    Numeric("ddMMy"),
+}
+
 enum class FontChoice {
     System, Condensed, Serif, Mono, SerifMono, Casual, Cursive, SmallCaps, Custom,
 }
@@ -81,6 +91,7 @@ data class LauncherSettings(
     // Home layout
     val showClock: Boolean = true,
     val showDate: Boolean = true,
+    val dateStyle: DateStyle = DateStyle.Full,
     /** Home app list. */
     val homeAlignment: LabelAlignment = LabelAlignment.Left,
     /** Clock, date and weather. */
@@ -118,6 +129,7 @@ data class LauncherSettings(
 
     // Weather
     val showWeather: Boolean = false,
+    val weatherIcon: IconMode = IconMode.Off,
     val weatherLocation: WeatherLocation? = null,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.Celsius,
 

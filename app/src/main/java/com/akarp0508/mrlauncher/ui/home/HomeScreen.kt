@@ -23,7 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.AppInfo
+import com.akarp0508.mrlauncher.data.DateStyle
 import com.akarp0508.mrlauncher.data.Gesture
+import com.akarp0508.mrlauncher.data.IconMode
 import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.data.VerticalPosition
 import com.akarp0508.mrlauncher.data.Weather
@@ -34,7 +36,6 @@ import com.akarp0508.mrlauncher.ui.components.textAlign
 import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
 import kotlinx.coroutines.delay
 import java.util.Date
-import java.util.Locale
 
 /** Side margins of the home screen; edit mode puts its controls inside them. */
 internal val HomeHorizontalPadding = 32.dp
@@ -74,7 +75,9 @@ fun HomeScreen(
             Header(
                 showTime = settings.showClock,
                 showDate = settings.showDate,
+                dateStyle = settings.dateStyle,
                 weather = weather,
+                weatherIconMode = settings.weatherIcon,
                 horizontalAlignment = clockAlignment,
                 interactive = editor == null,
                 onClockClick = { onGesture(Gesture.ClockTap) },
@@ -119,7 +122,9 @@ fun HomeScreen(
 private fun Header(
     showTime: Boolean,
     showDate: Boolean,
+    dateStyle: DateStyle,
     weather: Weather?,
+    weatherIconMode: IconMode,
     horizontalAlignment: Alignment.Horizontal,
     /** False in edit mode: the header is shown for layout only. */
     interactive: Boolean,
@@ -136,10 +141,7 @@ private fun Header(
         }
     }
     val time = remember(now) { DateFormat.getTimeFormat(context).format(Date(now)) }
-    val date = remember(now) {
-        val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "EEEEdMMMM")
-        DateFormat.format(pattern, now).toString()
-    }
+    val date = remember(now, dateStyle) { dateStyle.format(now) }
     val dim = LauncherTheme.colors.textDim
 
     Column(horizontalAlignment = horizontalAlignment, modifier = modifier) {
@@ -159,8 +161,14 @@ private fun Header(
             )
         }
         if (weather != null) {
+            val description = stringResource(R.string.weather_format, weather.temperature, stringResource(weatherDescription(weather.code)))
+            val icon = when (weatherIconMode) {
+                IconMode.Off -> ""
+                IconMode.Color -> weatherIcon(weather.code, weather.isDay, color = true)
+                IconMode.Monochrome -> weatherIcon(weather.code, weather.isDay, color = false)
+            }
             Text(
-                text = stringResource(R.string.weather_format, weather.temperature, stringResource(weatherDescription(weather.code))),
+                text = if (icon.isEmpty()) description else "$icon $description",
                 style = LauncherTheme.textStyles.date,
                 color = dim,
                 modifier = Modifier.clickable(enabled = interactive, onClick = onWeatherClick),

@@ -14,6 +14,7 @@ data class Weather(
     val temperature: Int,
     /** WMO weather interpretation code. */
     val code: Int,
+    val isDay: Boolean = true,
 )
 
 /** Open-Meteo: free, no API key, no account. */
@@ -43,12 +44,13 @@ class WeatherRepository {
             }
             val json = getJson(
                 "$FORECAST_URL?latitude=${location.latitude}&longitude=${location.longitude}" +
-                    "&current=temperature_2m,weather_code&temperature_unit=$unitParam",
+                    "&current=temperature_2m,weather_code,is_day&temperature_unit=$unitParam",
             )
             val current = json.getJSONObject("current")
             Weather(
                 temperature = current.getDouble("temperature_2m").roundToInt(),
                 code = current.getInt("weather_code"),
+                isDay = current.optInt("is_day", 1) == 1,
             )
         }
 

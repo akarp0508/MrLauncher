@@ -16,7 +16,8 @@ MrLauncher is inspired mostly by [Olauncher](https://github.com/tanujnotes/Olaun
 - **Layout** — separate left/center/right alignment for the clock, home apps and drawer, where the app list sits, spacing, status bar on/off, and separate text sizes for the clock, date & weather, home apps, drawer and menus
 - **Colors** — text, accent and background colors from presets or any hex value; *auto* text picks light or dark based on what's behind it; separate background opacity for home and the drawer, from bare wallpaper to solid color
 - **Fonts** — any of Android's built-in fonts, or import your own `.ttf` / `.otf`, with a font weight from thin to bold
-- **Weather** — current conditions for a city you choose, from [Open-Meteo](https://open-meteo.com) (free, no account, no location permission)
+- **Weather** — current conditions for a city you choose, from [Open-Meteo](https://open-meteo.com) (free, no account, no location permission), with optional color or monochrome icons
+- **Date format** — several formats to pick from, following your locale
 
 ## Building
 

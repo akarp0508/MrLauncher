@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.akarp0508.mrlauncher.R
+import com.akarp0508.mrlauncher.data.DateStyle
 import com.akarp0508.mrlauncher.data.FontChoice
 import com.akarp0508.mrlauncher.data.Gesture
 import com.akarp0508.mrlauncher.data.TextWeight
@@ -32,6 +33,7 @@ import com.akarp0508.mrlauncher.data.GestureAction
 import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.data.WeatherLocation
 import com.akarp0508.mrlauncher.ui.LauncherUiState
+import com.akarp0508.mrlauncher.ui.home.format
 import com.akarp0508.mrlauncher.ui.theme.AccentColorPresets
 import com.akarp0508.mrlauncher.ui.theme.BackgroundColorPresets
 import com.akarp0508.mrlauncher.ui.theme.TextColorPresets
@@ -43,6 +45,7 @@ private enum class ColorTarget { Text, Accent, Background }
 private sealed interface SettingsDialog {
     data object Font : SettingsDialog
     data object Weight : SettingsDialog
+    data object DateFormat : SettingsDialog
     data class GestureActionPicker(val gesture: Gesture) : SettingsDialog
     data class GestureAppPicker(val gesture: Gesture) : SettingsDialog
     data object WeatherLocationPicker : SettingsDialog
@@ -65,6 +68,8 @@ fun SettingsScreen(
     onOpenAccessibilitySettings: () -> Unit,
 ) {
     val settings = state.settings
+    // For the date format samples; settings isn't open long enough for this to go stale.
+    val now = remember { System.currentTimeMillis() }
     var dialog by remember { mutableStateOf<SettingsDialog?>(null) }
     val fontPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let(onImportFont)
@@ -88,6 +93,11 @@ fun SettingsScreen(
         item { SettingRow(R.string.settings_edit_home, value = null, onClick = onEditHome) }
         item { ToggleRow(R.string.settings_clock, settings.showClock) { onUpdate { it.copy(showClock = !it.showClock) } } }
         item { ToggleRow(R.string.settings_date, settings.showDate) { onUpdate { it.copy(showDate = !it.showDate) } } }
+        item {
+            SettingRow(R.string.settings_date_format, settings.dateStyle.format(now)) {
+                dialog = SettingsDialog.DateFormat
+            }
+        }
         item {
             SettingRow(R.string.settings_clock_alignment, stringResource(settings.clockAlignment.label)) {
                 onUpdate { it.copy(clockAlignment = it.clockAlignment.next()) }
@@ -248,6 +258,11 @@ fun SettingsScreen(
             ) { dialog = SettingsDialog.WeatherLocationPicker }
         }
         item {
+            SettingRow(R.string.settings_weather_icon, stringResource(settings.weatherIcon.label)) {
+                onUpdate { it.copy(weatherIcon = it.weatherIcon.next()) }
+            }
+        }
+        item {
             SettingRow(R.string.settings_weather_units, stringResource(settings.temperatureUnit.label)) {
                 onUpdate { it.copy(temperatureUnit = it.temperatureUnit.next()) }
             }
@@ -299,6 +314,18 @@ fun SettingsScreen(
                 dialog = null
                 fontPicker.launch(FontMimeTypes)
             },
+        )
+        SettingsDialog.DateFormat -> OptionDialog(
+            title = stringResource(R.string.settings_date_format),
+            options = DateStyle.entries,
+            selected = settings.dateStyle,
+            // Each option is today's date in that format.
+            label = { it.format(now) },
+            onSelect = { style ->
+                onUpdate { it.copy(dateStyle = style) }
+                dialog = null
+            },
+            onDismiss = { dialog = null },
         )
         SettingsDialog.Weight -> {
             val family = remember(settings.font, settings.customFontPath) {

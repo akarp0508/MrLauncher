@@ -35,6 +35,7 @@ class SettingsRepository(private val context: Context) {
             renamedApps = withPrefix(RENAME_PREFIX),
             showClock = this[SHOW_CLOCK] ?: defaults.showClock,
             showDate = this[SHOW_DATE] ?: defaults.showDate,
+            dateStyle = this[DATE_STYLE].toEnum(defaults.dateStyle),
             homeAlignment = this[HOME_ALIGNMENT].migrateAlignment().toEnum(defaults.homeAlignment),
             // Until set separately, the clock keeps following the alignment the apps had.
             clockAlignment = (this[CLOCK_ALIGNMENT] ?: this[HOME_ALIGNMENT])
@@ -64,6 +65,7 @@ class SettingsRepository(private val context: Context) {
             homeBackgroundAlpha = this[HOME_BACKGROUND_ALPHA] ?: defaults.homeBackgroundAlpha,
             drawerBackgroundAlpha = this[DRAWER_BACKGROUND_ALPHA] ?: defaults.drawerBackgroundAlpha,
             showWeather = this[SHOW_WEATHER] ?: defaults.showWeather,
+            weatherIcon = this[WEATHER_ICON].toEnum(defaults.weatherIcon),
             weatherLocation = if (weatherName != null && weatherLat != null && weatherLon != null) {
                 WeatherLocation(weatherName, weatherLat, weatherLon)
             } else {
@@ -82,6 +84,7 @@ class SettingsRepository(private val context: Context) {
         replacePrefixed(RENAME_PREFIX, settings.renamedApps)
         this[SHOW_CLOCK] = settings.showClock
         this[SHOW_DATE] = settings.showDate
+        this[DATE_STYLE] = settings.dateStyle.name
         this[HOME_ALIGNMENT] = settings.homeAlignment.name
         this[CLOCK_ALIGNMENT] = settings.clockAlignment.name
         this[HOME_POSITION] = settings.homeVerticalPosition.name
@@ -109,6 +112,7 @@ class SettingsRepository(private val context: Context) {
         this[HOME_BACKGROUND_ALPHA] = settings.homeBackgroundAlpha
         this[DRAWER_BACKGROUND_ALPHA] = settings.drawerBackgroundAlpha
         this[SHOW_WEATHER] = settings.showWeather
+        this[WEATHER_ICON] = settings.weatherIcon.name
         setOrRemove(WEATHER_NAME, settings.weatherLocation?.name)
         setOrRemove(WEATHER_LAT, settings.weatherLocation?.latitude)
         setOrRemove(WEATHER_LON, settings.weatherLocation?.longitude)
@@ -161,6 +165,7 @@ class SettingsRepository(private val context: Context) {
         val HIDDEN_APPS = stringSetPreferencesKey("hidden_apps")
         val SHOW_CLOCK = booleanPreferencesKey("show_clock")
         val SHOW_DATE = booleanPreferencesKey("show_date")
+        val DATE_STYLE = stringPreferencesKey("date_style")
         val HOME_ALIGNMENT = stringPreferencesKey("alignment")
         val CLOCK_ALIGNMENT = stringPreferencesKey("clock_alignment")
         val HOME_POSITION = stringPreferencesKey("home_position")
@@ -189,6 +194,7 @@ class SettingsRepository(private val context: Context) {
         // Old key name kept so the existing "background dim" value carries over.
         val DRAWER_BACKGROUND_ALPHA = floatPreferencesKey("scrim_alpha")
         val SHOW_WEATHER = booleanPreferencesKey("show_weather")
+        val WEATHER_ICON = stringPreferencesKey("weather_icon")
         val WEATHER_NAME = stringPreferencesKey("weather_name")
         val WEATHER_LAT = doublePreferencesKey("weather_lat")
         val WEATHER_LON = doublePreferencesKey("weather_lon")
