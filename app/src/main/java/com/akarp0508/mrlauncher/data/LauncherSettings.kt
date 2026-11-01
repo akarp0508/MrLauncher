@@ -91,6 +91,8 @@ data class LauncherSettings(
     // Drawer
     val drawerAlignment: LabelAlignment = LabelAlignment.Left,
     val showDrawerIcons: Boolean = false,
+    /** Applies wherever icons are shown. */
+    val monochromeIcons: Boolean = false,
     val autoLaunchSingleMatch: Boolean = true,
     val autoShowKeyboard: Boolean = true,
 

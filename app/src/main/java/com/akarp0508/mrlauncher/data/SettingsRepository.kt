@@ -43,6 +43,7 @@ class SettingsRepository(private val context: Context) {
             itemSpacing = this[ITEM_SPACING].toEnum(defaults.itemSpacing),
             showHomeIcons = this[SHOW_HOME_ICONS] ?: defaults.showHomeIcons,
             showDrawerIcons = this[SHOW_DRAWER_ICONS] ?: defaults.showDrawerIcons,
+            monochromeIcons = this[MONOCHROME_ICONS] ?: defaults.monochromeIcons,
             showStatusBar = this[SHOW_STATUS_BAR] ?: defaults.showStatusBar,
             drawerAlignment = this[DRAWER_ALIGNMENT].migrateAlignment().toEnum(defaults.drawerAlignment),
             autoLaunchSingleMatch = this[AUTO_LAUNCH] ?: defaults.autoLaunchSingleMatch,
@@ -88,6 +89,7 @@ class SettingsRepository(private val context: Context) {
         this[ITEM_SPACING] = settings.itemSpacing.name
         this[SHOW_HOME_ICONS] = settings.showHomeIcons
         this[SHOW_DRAWER_ICONS] = settings.showDrawerIcons
+        this[MONOCHROME_ICONS] = settings.monochromeIcons
         this[SHOW_STATUS_BAR] = settings.showStatusBar
         this[DRAWER_ALIGNMENT] = settings.drawerAlignment.name
         this[AUTO_LAUNCH] = settings.autoLaunchSingleMatch
@@ -157,6 +159,7 @@ class SettingsRepository(private val context: Context) {
         val ITEM_SPACING = stringPreferencesKey("item_spacing")
         val SHOW_HOME_ICONS = booleanPreferencesKey("show_home_icons")
         val SHOW_DRAWER_ICONS = booleanPreferencesKey("show_drawer_icons")
+        val MONOCHROME_ICONS = booleanPreferencesKey("monochrome_icons")
         val SHOW_STATUS_BAR = booleanPreferencesKey("show_status_bar")
         val DRAWER_ALIGNMENT = stringPreferencesKey("drawer_alignment")
         val AUTO_LAUNCH = booleanPreferencesKey("auto_launch_single_match")

@@ -143,6 +143,11 @@ fun SettingsScreen(
 
         item { SectionHeader(R.string.settings_section_look) }
         item {
+            ToggleRow(R.string.settings_monochrome_icons, settings.monochromeIcons) {
+                onUpdate { it.copy(monochromeIcons = !it.monochromeIcons) }
+            }
+        }
+        item {
             SettingRow(
                 title = R.string.settings_font,
                 value = stringResource(settings.font.label),

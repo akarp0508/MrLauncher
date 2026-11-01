@@ -49,6 +49,7 @@
     <string name="settings_item_spacing">Spacing</string>
     <string name="settings_status_bar">Status bar</string>
     <string name="settings_app_icons">App icons</string>
+    <string name="settings_monochrome_icons">Monochrome icons</string>
     <string name="settings_auto_launch">Launch single search match</string>
     <string name="settings_auto_keyboard">Open keyboard automatically</string>
     <string name="settings_font">Font</string>
