@@ -10,7 +10,7 @@
 
     <string name="edit_home_done">Done</string>
     <string name="edit_home_hint">Drag ≡ to reorder · tap an app for more</string>
-    <string name="edit_home_add">+ Add apps</string>
+    <string name="edit_home_add">+ Add</string>
     <string name="edit_home_add_title">Add apps</string>
     <string name="edit_home_reorder">Drag to reorder</string>
     <string name="edit_home_remove">Remove from home</string>

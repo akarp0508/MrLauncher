@@ -114,7 +114,7 @@ fun HomeScreen(
             if (position != VerticalPosition.Bottom) Spacer(Modifier.weight(1f))
         }
 
-        if (editor != null) EditToolbar(onDone = editor.onDone, modifier = Modifier.align(Alignment.TopCenter))
+        if (editor != null) EditToolbar(editor, apps, Modifier.align(Alignment.TopCenter))
     }
 }
 

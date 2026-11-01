@@ -5,6 +5,8 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -40,7 +42,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -64,10 +65,14 @@ class HomeEditor(
     val onDone: () -> Unit,
 )
 
-/** Sits in the top margin above the clock, so the home layout below stays exactly as it is. */
+/**
+ * Sits in the top margin above the clock. Nothing edit-related takes space in the home layout
+ * itself, so apps stay exactly where they'll end up.
+ */
 @Composable
-internal fun EditToolbar(onDone: () -> Unit, modifier: Modifier = Modifier) {
+internal fun EditToolbar(editor: HomeEditor, homeApps: List<AppInfo>, modifier: Modifier = Modifier) {
     val colors = LauncherTheme.colors
+    var addingApps by rememberSaveable { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -80,15 +85,34 @@ internal fun EditToolbar(onDone: () -> Unit, modifier: Modifier = Modifier) {
             text = stringResource(R.string.edit_home_hint),
             style = MaterialTheme.typography.labelLarge,
             color = colors.textDim,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = stringResource(R.string.edit_home_add),
+            style = MaterialTheme.typography.labelLarge,
+            color = colors.accent,
+            modifier = Modifier
+                .clickable { addingApps = true }
+                .padding(8.dp),
         )
         Text(
             text = stringResource(R.string.edit_home_done),
             style = MaterialTheme.typography.labelLarge,
             color = colors.accent,
             modifier = Modifier
-                .clickable(onClick = onDone)
+                .clickable(onClick = editor.onDone)
                 .padding(8.dp),
+        )
+    }
+
+    if (addingApps) {
+        AddHomeAppsDialog(
+            apps = editor.availableApps,
+            homeKeys = homeApps.map { it.key }.toSet(),
+            onToggle = editor.onToggleApp,
+            onDismiss = { addingApps = false },
         )
     }
 }
@@ -100,9 +124,7 @@ internal fun EditToolbar(onDone: () -> Unit, modifier: Modifier = Modifier) {
  */
 @Composable
 internal fun EditableHomeApps(apps: List<AppInfo>, alignment: LabelAlignment, editor: HomeEditor) {
-    val colors = LauncherTheme.colors
     val currentOnReorder by rememberUpdatedState(editor.onReorder)
-    var addingApps by rememberSaveable { mutableStateOf(false) }
 
     // Local copy so rows move live while dragging; saved once when the drag ends. One state object
     // for the screen's lifetime: the drag handlers below capture it and aren't restarted.
@@ -131,8 +153,7 @@ internal fun EditableHomeApps(apps: List<AppInfo>, alignment: LabelAlignment, ed
     order.forEach { app ->
         key(app.key) {
             val isDragging = app.key == draggingKey
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { rowHeights[app.key] = it.height }
@@ -142,33 +163,13 @@ internal fun EditableHomeApps(apps: List<AppInfo>, alignment: LabelAlignment, ed
                         alpha = if (isDragging) 0.7f else 1f
                     },
             ) {
-                MarginControl(
-                    text = "≡",
-                    description = reorderDescription,
-                    modifier = Modifier.pointerInput(app.key) {
-                        detectDragGestures(
-                            onDragStart = {
-                                draggingKey = app.key
-                                dragOffset = 0f
-                            },
-                            onDragEnd = ::endDrag,
-                            onDragCancel = ::endDrag,
-                        ) { change, amount ->
-                            change.consume()
-                            dragOffset += amount.y
-                            // Swap with a neighbour once dragged past half of its height.
-                            val index = order.indexOfFirst { it.key == app.key }
-                            val neighbour = if (dragOffset > 0) index + 1 else index - 1
-                            if (neighbour !in order.indices) return@detectDragGestures
-                            val height = rowHeights[order[neighbour].key] ?: return@detectDragGestures
-                            if (abs(dragOffset) > height / 2f) {
-                                order = order.toMutableList().apply { add(neighbour, removeAt(index)) }
-                                dragOffset += if (neighbour > index) -height else height
-                            }
-                        }
-                    },
-                )
-                Box(contentAlignment = labelAlignment, modifier = Modifier.weight(1f)) {
+                // Only the label decides the row's height, exactly as on the real home screen.
+                Box(
+                    contentAlignment = labelAlignment,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = HomeHorizontalPadding),
+                ) {
                     AppLabel(
                         app = app,
                         style = LauncherTheme.textStyles.homeApp,
@@ -177,49 +178,58 @@ internal fun EditableHomeApps(apps: List<AppInfo>, alignment: LabelAlignment, ed
                         onLongClick = { editor.onAppClick(app) },
                     )
                 }
-                MarginControl(
-                    text = "✕",
-                    description = removeDescription,
-                    modifier = Modifier.clickable { editor.onToggleApp(app) },
-                )
+                // Controls are laid over the row's side margins and take on its height.
+                Row(Modifier.matchParentSize()) {
+                    MarginControl(
+                        text = "≡",
+                        description = reorderDescription,
+                        modifier = Modifier.pointerInput(app.key) {
+                            detectDragGestures(
+                                onDragStart = {
+                                    draggingKey = app.key
+                                    dragOffset = 0f
+                                },
+                                onDragEnd = ::endDrag,
+                                onDragCancel = ::endDrag,
+                            ) { change, amount ->
+                                change.consume()
+                                dragOffset += amount.y
+                                // Swap with a neighbour once dragged past half of its height.
+                                val index = order.indexOfFirst { it.key == app.key }
+                                val neighbour = if (dragOffset > 0) index + 1 else index - 1
+                                if (neighbour !in order.indices) return@detectDragGestures
+                                val height = rowHeights[order[neighbour].key] ?: return@detectDragGestures
+                                if (abs(dragOffset) > height / 2f) {
+                                    order = order.toMutableList().apply { add(neighbour, removeAt(index)) }
+                                    dragOffset += if (neighbour > index) -height else height
+                                }
+                            }
+                        },
+                    )
+                    Spacer(Modifier.weight(1f))
+                    MarginControl(
+                        text = "✕",
+                        description = removeDescription,
+                        modifier = Modifier.clickable { editor.onToggleApp(app) },
+                    )
+                }
             }
         }
     }
-
-    Text(
-        text = stringResource(R.string.edit_home_add),
-        style = LauncherTheme.textStyles.homeApp,
-        color = colors.textDim,
-        textAlign = alignment.textAlign,
-        modifier = Modifier
-            .padding(horizontal = HomeHorizontalPadding)
-            .clickable { addingApps = true }
-            .padding(vertical = LauncherTheme.itemSpacing),
-    )
-
-    if (addingApps) {
-        AddHomeAppsDialog(
-            apps = editor.availableApps,
-            homeKeys = apps.map { it.key }.toSet(),
-            onToggle = editor.onToggleApp,
-            onDismiss = { addingApps = false },
-        )
-    }
 }
 
-/** A control occupying one side margin of the home screen, as tall as its row. */
+/** A control filling one side margin of the home screen, as tall as its row. */
 @Composable
 private fun MarginControl(text: String, description: String, modifier: Modifier) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodyLarge,
-        color = LauncherTheme.colors.textDim,
-        textAlign = TextAlign.Center,
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .width(HomeHorizontalPadding)
-            .semantics { contentDescription = description }
-            .padding(vertical = 12.dp),
-    )
+            .fillMaxHeight()
+            .semantics { contentDescription = description },
+    ) {
+        Text(text = text, style = MaterialTheme.typography.bodyLarge, color = LauncherTheme.colors.textDim)
+    }
 }
 
 @Composable
