@@ -7,6 +7,8 @@ enum class VerticalPosition { Top, Center, Bottom }
 
 enum class ItemSpacing { Compact, Normal, Roomy }
 
+enum class IconMode { Off, Color, Monochrome }
+
 enum class FontChoice {
     System, Condensed, Serif, Mono, SerifMono, Casual, Cursive, SmallCaps, Custom,
 }
@@ -85,14 +87,12 @@ data class LauncherSettings(
     val clockAlignment: LabelAlignment = LabelAlignment.Left,
     val homeVerticalPosition: VerticalPosition = VerticalPosition.Center,
     val itemSpacing: ItemSpacing = ItemSpacing.Normal,
-    val showHomeIcons: Boolean = false,
+    val homeIcons: IconMode = IconMode.Off,
     val showStatusBar: Boolean = true,
 
     // Drawer
     val drawerAlignment: LabelAlignment = LabelAlignment.Left,
-    val showDrawerIcons: Boolean = false,
-    /** Applies wherever icons are shown. */
-    val monochromeIcons: Boolean = false,
+    val drawerIcons: IconMode = IconMode.Off,
     val autoLaunchSingleMatch: Boolean = true,
     val autoShowKeyboard: Boolean = true,
 

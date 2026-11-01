@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,13 +23,10 @@ import kotlin.math.roundToInt
 /** Null in previews and anywhere icons aren't wired up; [AppIcon] then draws an empty slot. */
 val LocalAppIconLoader = staticCompositionLocalOf<AppIconLoader?> { null }
 
-val LocalMonochromeIcons = compositionLocalOf { false }
-
 /** An app icon of [size]; the space is reserved while it loads so text doesn't jump. */
 @Composable
-fun AppIcon(app: AppInfo, size: Dp, modifier: Modifier = Modifier) {
+fun AppIcon(app: AppInfo, size: Dp, monochrome: Boolean, modifier: Modifier = Modifier) {
     val loader = LocalAppIconLoader.current
-    val monochrome = LocalMonochromeIcons.current
     val sizePx = with(LocalDensity.current) { size.toPx().roundToInt() }
     // Keyed state, so a slot reused for a different app (e.g. after reordering) never shows the
     // previous app's icon. Cache hits are synchronous, so scrolling back doesn't flicker.

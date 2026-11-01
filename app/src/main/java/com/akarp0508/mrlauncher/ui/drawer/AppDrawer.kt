@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.AppInfo
+import com.akarp0508.mrlauncher.data.IconMode
 import com.akarp0508.mrlauncher.ui.components.AppLabel
 import com.akarp0508.mrlauncher.data.LabelAlignment
 import com.akarp0508.mrlauncher.ui.components.textAlign
@@ -45,7 +46,7 @@ fun AppDrawer(
     onOpenSettings: () -> Unit,
     alignment: LabelAlignment,
     autoShowKeyboard: Boolean,
-    showIcons: Boolean,
+    icons: IconMode,
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -126,7 +127,7 @@ fun AppDrawer(
                     onClick = { onAppClick(app) },
                     onLongClick = { onAppLongClick(app) },
                     textAlign = alignment.textAlign,
-                    showIcon = showIcons,
+                    icons = icons,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

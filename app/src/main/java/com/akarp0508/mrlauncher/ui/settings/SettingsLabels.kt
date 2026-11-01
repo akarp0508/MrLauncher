@@ -8,6 +8,7 @@ import com.akarp0508.mrlauncher.data.AppInfo
 import com.akarp0508.mrlauncher.data.FontChoice
 import com.akarp0508.mrlauncher.data.Gesture
 import com.akarp0508.mrlauncher.data.GestureAction
+import com.akarp0508.mrlauncher.data.IconMode
 import com.akarp0508.mrlauncher.data.ItemSpacing
 import com.akarp0508.mrlauncher.data.LabelAlignment
 import com.akarp0508.mrlauncher.data.TemperatureUnit
@@ -22,6 +23,13 @@ val LabelAlignment.label: Int
         LabelAlignment.Left -> R.string.alignment_left
         LabelAlignment.Center -> R.string.alignment_center
         LabelAlignment.Right -> R.string.alignment_right
+    }
+
+val IconMode.label: Int
+    @StringRes get() = when (this) {
+        IconMode.Off -> R.string.settings_off
+        IconMode.Color -> R.string.icons_color
+        IconMode.Monochrome -> R.string.icons_monochrome
     }
 
 val VerticalPosition.label: Int

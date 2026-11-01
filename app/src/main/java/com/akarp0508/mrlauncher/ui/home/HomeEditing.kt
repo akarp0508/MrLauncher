@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.AppInfo
+import com.akarp0508.mrlauncher.data.IconMode
 import com.akarp0508.mrlauncher.data.LabelAlignment
 import com.akarp0508.mrlauncher.search.AppSearch
 import com.akarp0508.mrlauncher.ui.components.AppLabel
@@ -126,7 +127,7 @@ internal fun EditToolbar(editor: HomeEditor, homeApps: List<AppInfo>, modifier: 
 internal fun EditableHomeApps(
     apps: List<AppInfo>,
     alignment: LabelAlignment,
-    showIcons: Boolean,
+    icons: IconMode,
     editor: HomeEditor,
 ) {
     val currentOnReorder by rememberUpdatedState(editor.onReorder)
@@ -181,7 +182,7 @@ internal fun EditableHomeApps(
                         textAlign = alignment.textAlign,
                         onClick = { editor.onAppClick(app) },
                         onLongClick = { editor.onAppClick(app) },
-                        showIcon = showIcons,
+                        icons = icons,
                     )
                 }
                 // Controls are laid over the row's side margins and take on its height.

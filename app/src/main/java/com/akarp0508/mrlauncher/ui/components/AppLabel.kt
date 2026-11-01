@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.AppInfo
+import com.akarp0508.mrlauncher.data.IconMode
 import com.akarp0508.mrlauncher.data.LabelAlignment
 import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
 
@@ -32,7 +33,7 @@ fun AppLabel(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     textAlign: TextAlign? = null,
-    showIcon: Boolean = false,
+    icons: IconMode = IconMode.Off,
 ) {
     val workSuffix = stringResource(R.string.work_profile_suffix)
     val dim = LauncherTheme.colors.textDim
@@ -48,7 +49,7 @@ fun AppLabel(
         .combinedClickable(onClick = onClick, onLongClick = onLongClick)
         .padding(vertical = LauncherTheme.itemSpacing)
 
-    if (!showIcon) {
+    if (icons == IconMode.Off) {
         Text(
             text = text,
             style = style,
@@ -73,7 +74,8 @@ fun AppLabel(
         horizontalArrangement = Arrangement.spacedBy(iconSize * 0.4f, textAlign.arrangement),
         modifier = clickable,
     ) {
-        if (!iconAfterText) AppIcon(app, iconSize)
+        val monochrome = icons == IconMode.Monochrome
+        if (!iconAfterText) AppIcon(app, iconSize, monochrome)
         Text(
             text = text,
             style = style,
@@ -81,7 +83,7 @@ fun AppLabel(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f, fill = false),
         )
-        if (iconAfterText) AppIcon(app, iconSize)
+        if (iconAfterText) AppIcon(app, iconSize, monochrome)
     }
 }
 

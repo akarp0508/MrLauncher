@@ -24,7 +24,6 @@ import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.system.SystemActions
 import com.akarp0508.mrlauncher.ui.components.AppActionsDialog
 import com.akarp0508.mrlauncher.ui.components.LocalAppIconLoader
-import com.akarp0508.mrlauncher.ui.components.LocalMonochromeIcons
 import com.akarp0508.mrlauncher.ui.components.RenameDialog
 import com.akarp0508.mrlauncher.ui.drawer.AppDrawer
 import com.akarp0508.mrlauncher.ui.home.HomeEditor
@@ -46,10 +45,7 @@ fun LauncherRoot(viewModel: LauncherViewModel) {
             darkIcons = LauncherTheme.colorsFor(opacity).isDarkText,
             showStatusBar = state.settings.showStatusBar,
         )
-        CompositionLocalProvider(
-            LocalAppIconLoader provides viewModel.iconLoader,
-            LocalMonochromeIcons provides state.settings.monochromeIcons,
-        ) {
+        CompositionLocalProvider(LocalAppIconLoader provides viewModel.iconLoader) {
             LauncherContent(state, viewModel)
         }
     }
@@ -103,7 +99,7 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     onOpenSettings = viewModel::openSettings,
                     alignment = state.settings.drawerAlignment,
                     autoShowKeyboard = state.settings.autoShowKeyboard,
-                showIcons = state.settings.showDrawerIcons,
+                icons = state.settings.drawerIcons,
                 )
                 Screen.Settings -> SettingsScreen(
                     state = state,

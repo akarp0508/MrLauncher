@@ -109,8 +109,8 @@ fun SettingsScreen(
             }
         }
         item {
-            ToggleRow(R.string.settings_app_icons, settings.showHomeIcons) {
-                onUpdate { it.copy(showHomeIcons = !it.showHomeIcons) }
+            SettingRow(R.string.settings_app_icons, stringResource(settings.homeIcons.label)) {
+                onUpdate { it.copy(homeIcons = it.homeIcons.next()) }
             }
         }
         item {
@@ -126,8 +126,8 @@ fun SettingsScreen(
             }
         }
         item {
-            ToggleRow(R.string.settings_app_icons, settings.showDrawerIcons) {
-                onUpdate { it.copy(showDrawerIcons = !it.showDrawerIcons) }
+            SettingRow(R.string.settings_app_icons, stringResource(settings.drawerIcons.label)) {
+                onUpdate { it.copy(drawerIcons = it.drawerIcons.next()) }
             }
         }
         item {
@@ -142,11 +142,6 @@ fun SettingsScreen(
         }
 
         item { SectionHeader(R.string.settings_section_look) }
-        item {
-            ToggleRow(R.string.settings_monochrome_icons, settings.monochromeIcons) {
-                onUpdate { it.copy(monochromeIcons = !it.monochromeIcons) }
-            }
-        }
         item {
             SettingRow(
                 title = R.string.settings_font,

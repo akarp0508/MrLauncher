@@ -41,9 +41,8 @@ class SettingsRepository(private val context: Context) {
                 .migrateAlignment().toEnum(defaults.clockAlignment),
             homeVerticalPosition = this[HOME_POSITION].toEnum(defaults.homeVerticalPosition),
             itemSpacing = this[ITEM_SPACING].toEnum(defaults.itemSpacing),
-            showHomeIcons = this[SHOW_HOME_ICONS] ?: defaults.showHomeIcons,
-            showDrawerIcons = this[SHOW_DRAWER_ICONS] ?: defaults.showDrawerIcons,
-            monochromeIcons = this[MONOCHROME_ICONS] ?: defaults.monochromeIcons,
+            homeIcons = this[HOME_ICONS].toEnumOrNull<IconMode>() ?: legacyIconMode(LEGACY_SHOW_HOME_ICONS) ?: defaults.homeIcons,
+            drawerIcons = this[DRAWER_ICONS].toEnumOrNull<IconMode>() ?: legacyIconMode(LEGACY_SHOW_DRAWER_ICONS) ?: defaults.drawerIcons,
             showStatusBar = this[SHOW_STATUS_BAR] ?: defaults.showStatusBar,
             drawerAlignment = this[DRAWER_ALIGNMENT].migrateAlignment().toEnum(defaults.drawerAlignment),
             autoLaunchSingleMatch = this[AUTO_LAUNCH] ?: defaults.autoLaunchSingleMatch,
@@ -87,9 +86,11 @@ class SettingsRepository(private val context: Context) {
         this[CLOCK_ALIGNMENT] = settings.clockAlignment.name
         this[HOME_POSITION] = settings.homeVerticalPosition.name
         this[ITEM_SPACING] = settings.itemSpacing.name
-        this[SHOW_HOME_ICONS] = settings.showHomeIcons
-        this[SHOW_DRAWER_ICONS] = settings.showDrawerIcons
-        this[MONOCHROME_ICONS] = settings.monochromeIcons
+        this[HOME_ICONS] = settings.homeIcons.name
+        this[DRAWER_ICONS] = settings.drawerIcons.name
+        remove(LEGACY_SHOW_HOME_ICONS)
+        remove(LEGACY_SHOW_DRAWER_ICONS)
+        remove(LEGACY_MONOCHROME_ICONS)
         this[SHOW_STATUS_BAR] = settings.showStatusBar
         this[DRAWER_ALIGNMENT] = settings.drawerAlignment.name
         this[AUTO_LAUNCH] = settings.autoLaunchSingleMatch
@@ -129,6 +130,13 @@ class SettingsRepository(private val context: Context) {
         if (value == null) remove(key) else this[key] = value
     }
 
+    /** Icons used to be an on/off per place plus one shared monochrome switch. */
+    private fun Preferences.legacyIconMode(shown: Preferences.Key<Boolean>): IconMode? = when (this[shown]) {
+        null -> null
+        false -> IconMode.Off
+        true -> if (this[LEGACY_MONOCHROME_ICONS] == true) IconMode.Monochrome else IconMode.Color
+    }
+
     /** Alignment used to be stored as Start/End before it became Left/Right. */
     private fun String?.migrateAlignment(): String? = when (this) {
         "Start" -> LabelAlignment.Left.name
@@ -157,9 +165,11 @@ class SettingsRepository(private val context: Context) {
         val CLOCK_ALIGNMENT = stringPreferencesKey("clock_alignment")
         val HOME_POSITION = stringPreferencesKey("home_position")
         val ITEM_SPACING = stringPreferencesKey("item_spacing")
-        val SHOW_HOME_ICONS = booleanPreferencesKey("show_home_icons")
-        val SHOW_DRAWER_ICONS = booleanPreferencesKey("show_drawer_icons")
-        val MONOCHROME_ICONS = booleanPreferencesKey("monochrome_icons")
+        val HOME_ICONS = stringPreferencesKey("home_icons")
+        val DRAWER_ICONS = stringPreferencesKey("drawer_icons")
+        val LEGACY_SHOW_HOME_ICONS = booleanPreferencesKey("show_home_icons")
+        val LEGACY_SHOW_DRAWER_ICONS = booleanPreferencesKey("show_drawer_icons")
+        val LEGACY_MONOCHROME_ICONS = booleanPreferencesKey("monochrome_icons")
         val SHOW_STATUS_BAR = booleanPreferencesKey("show_status_bar")
         val DRAWER_ALIGNMENT = stringPreferencesKey("drawer_alignment")
         val AUTO_LAUNCH = booleanPreferencesKey("auto_launch_single_match")

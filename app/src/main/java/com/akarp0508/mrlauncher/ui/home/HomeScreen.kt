@@ -85,7 +85,7 @@ fun HomeScreen(
 
             if (position == VerticalPosition.Top) Spacer(Modifier.height(48.dp)) else Spacer(Modifier.weight(1f))
             if (editor != null) {
-                EditableHomeApps(apps, settings.homeAlignment, settings.showHomeIcons, editor)
+                EditableHomeApps(apps, settings.homeAlignment, settings.homeIcons, editor)
             } else {
                 if (apps.isEmpty()) {
                     Text(
@@ -103,7 +103,7 @@ fun HomeScreen(
                         textAlign = textAlign,
                         onClick = { onAppClick(app) },
                         onLongClick = { onAppLongClick(app) },
-                        showIcon = settings.showHomeIcons,
+                        icons = settings.homeIcons,
                         modifier = sidePadding,
                     )
                 }
