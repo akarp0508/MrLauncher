@@ -45,7 +45,11 @@ class SettingsRepository(private val context: Context) {
             drawerAlignment = this[DRAWER_ALIGNMENT].migrateAlignment().toEnum(defaults.drawerAlignment),
             autoLaunchSingleMatch = this[AUTO_LAUNCH] ?: defaults.autoLaunchSingleMatch,
             autoShowKeyboard = this[AUTO_KEYBOARD] ?: defaults.autoShowKeyboard,
+            // Thin/Light/Medium used to be fonts; unknown names fall back to System below.
             font = this[FONT].toEnum(defaults.font),
+            textWeight = this[TEXT_WEIGHT].toEnumOrNull<TextWeight>()
+                ?: this[FONT].toEnumOrNull<TextWeight>()
+                ?: defaults.textWeight,
             customFontPath = this[CUSTOM_FONT_PATH],
             textScale = this[TEXT_SCALE] ?: defaults.textScale,
             clockTextScale = this[CLOCK_TEXT_SCALE] ?: defaults.clockTextScale,
@@ -85,6 +89,7 @@ class SettingsRepository(private val context: Context) {
         this[AUTO_LAUNCH] = settings.autoLaunchSingleMatch
         this[AUTO_KEYBOARD] = settings.autoShowKeyboard
         this[FONT] = settings.font.name
+        this[TEXT_WEIGHT] = settings.textWeight.name
         setOrRemove(CUSTOM_FONT_PATH, settings.customFontPath)
         this[TEXT_SCALE] = settings.textScale
         this[CLOCK_TEXT_SCALE] = settings.clockTextScale
@@ -125,6 +130,9 @@ class SettingsRepository(private val context: Context) {
         else -> this
     }
 
+    private inline fun <reified E : Enum<E>> String?.toEnumOrNull(): E? =
+        enumValues<E>().firstOrNull { it.name == this }
+
     private inline fun <reified E : Enum<E>> String?.toEnum(default: E): E =
         enumValues<E>().firstOrNull { it.name == this } ?: default
 
@@ -148,6 +156,7 @@ class SettingsRepository(private val context: Context) {
         val AUTO_LAUNCH = booleanPreferencesKey("auto_launch_single_match")
         val AUTO_KEYBOARD = booleanPreferencesKey("auto_show_keyboard")
         val FONT = stringPreferencesKey("font")
+        val TEXT_WEIGHT = stringPreferencesKey("text_weight")
         val CUSTOM_FONT_PATH = stringPreferencesKey("custom_font_path")
         val TEXT_SCALE = floatPreferencesKey("text_scale")
         val CLOCK_TEXT_SCALE = floatPreferencesKey("clock_text_scale")

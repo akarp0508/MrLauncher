@@ -22,10 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.FontChoice
 import com.akarp0508.mrlauncher.data.Gesture
+import com.akarp0508.mrlauncher.data.TextWeight
 import com.akarp0508.mrlauncher.data.GestureAction
 import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.data.WeatherLocation
@@ -40,6 +42,7 @@ private enum class ColorTarget { Text, Accent, Background }
 
 private sealed interface SettingsDialog {
     data object Font : SettingsDialog
+    data object Weight : SettingsDialog
     data class GestureActionPicker(val gesture: Gesture) : SettingsDialog
     data class GestureAppPicker(val gesture: Gesture) : SettingsDialog
     data object WeatherLocationPicker : SettingsDialog
@@ -134,6 +137,14 @@ fun SettingsScreen(
                 title = R.string.settings_font,
                 value = stringResource(settings.font.label),
                 onClick = { dialog = SettingsDialog.Font },
+            )
+        }
+        item {
+            SettingRow(
+                title = R.string.settings_font_weight,
+                value = stringResource(settings.textWeight.label),
+                valueStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight(settings.textWeight.value)),
+                onClick = { dialog = SettingsDialog.Weight },
             )
         }
         item {
@@ -279,6 +290,24 @@ fun SettingsScreen(
                 fontPicker.launch(FontMimeTypes)
             },
         )
+        SettingsDialog.Weight -> {
+            val family = remember(settings.font, settings.customFontPath) {
+                fontFamilyFor(settings.font, settings.customFontPath)
+            }
+            OptionDialog(
+                title = stringResource(R.string.settings_font_weight),
+                options = TextWeight.entries,
+                selected = settings.textWeight,
+                label = { stringResource(it.label) },
+                // Preview in the chosen font, so fonts without a given weight show that honestly.
+                optionStyle = { fontPreviewStyle.copy(fontFamily = family, fontWeight = FontWeight(it.value)) },
+                onSelect = { weight ->
+                    onUpdate { it.copy(textWeight = weight) }
+                    dialog = null
+                },
+                onDismiss = { dialog = null },
+            )
+        }
         is SettingsDialog.GestureActionPicker -> OptionDialog(
             title = stringResource(current.gesture.label),
             options = GestureAction.simpleActions,

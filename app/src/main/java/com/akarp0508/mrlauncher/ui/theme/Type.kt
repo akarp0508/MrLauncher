@@ -14,14 +14,12 @@ import androidx.compose.ui.unit.sp
 import com.akarp0508.mrlauncher.data.FontChoice
 import com.akarp0508.mrlauncher.data.FontStore
 import com.akarp0508.mrlauncher.data.LauncherSettings
+import com.akarp0508.mrlauncher.data.TextWeight
 
 /** Fonts that ship with Android itself, so nothing needs to be bundled or downloaded. */
 fun fontFamilyFor(choice: FontChoice, customFontPath: String?): FontFamily = when (choice) {
     FontChoice.System -> FontFamily.Default
-    FontChoice.Thin -> deviceFont("sans-serif-thin")
-    FontChoice.Light -> deviceFont("sans-serif-light")
     FontChoice.Condensed -> deviceFont("sans-serif-condensed")
-    FontChoice.Medium -> deviceFont("sans-serif-medium")
     FontChoice.Serif -> FontFamily.Serif
     FontChoice.Mono -> FontFamily.Monospace
     FontChoice.SerifMono -> deviceFont("serif-monospace")
@@ -31,7 +29,13 @@ fun fontFamilyFor(choice: FontChoice, customFontPath: String?): FontFamily = whe
     FontChoice.Custom -> customFontPath?.let(FontStore::load)?.let(::FontFamily) ?: FontFamily.Default
 }
 
-private fun deviceFont(name: String) = FontFamily(Font(DeviceFontFamilyName(name)))
+/**
+ * A device font family with every weight declared. A single Font(DeviceFontFamilyName) is always
+ * loaded at the weight it's declared with, so requesting Light from it would still give Regular.
+ */
+private fun deviceFont(name: String) = FontFamily(
+    TextWeight.entries.map { Font(DeviceFontFamilyName(name), FontWeight(it.value)) },
+)
 
 /**
  * The launcher's own text, each part sized independently. Kept apart from Material's
@@ -49,11 +53,12 @@ data class LauncherTextStyles(
 
 fun launcherTextStyles(fontFamily: FontFamily, settings: LauncherSettings, shadowColor: Color?): LauncherTextStyles {
     val text = TextBuilder(fontFamily, shadowColor)
+    val weight = FontWeight(settings.textWeight.value)
     return LauncherTextStyles(
-        clock = text.style(64 * settings.clockTextScale, FontWeight.Light, spacing = -1f),
-        date = text.style(16 * settings.dateTextScale, spacing = 0.5f),
-        homeApp = text.style(26 * settings.homeTextScale),
-        drawerApp = text.style(20 * settings.drawerTextScale),
+        clock = text.style(64 * settings.clockTextScale, weight, spacing = -1f),
+        date = text.style(16 * settings.dateTextScale, weight, spacing = 0.5f),
+        homeApp = text.style(26 * settings.homeTextScale, weight),
+        drawerApp = text.style(20 * settings.drawerTextScale, weight),
     )
 }
 

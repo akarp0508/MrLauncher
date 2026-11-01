@@ -11,6 +11,7 @@ import com.akarp0508.mrlauncher.data.GestureAction
 import com.akarp0508.mrlauncher.data.ItemSpacing
 import com.akarp0508.mrlauncher.data.LabelAlignment
 import com.akarp0508.mrlauncher.data.TemperatureUnit
+import com.akarp0508.mrlauncher.data.TextWeight
 import com.akarp0508.mrlauncher.data.VerticalPosition
 
 /** Next value, wrapping around; used by rows that cycle on tap. */
@@ -46,10 +47,7 @@ val TemperatureUnit.label: Int
 val FontChoice.label: Int
     @StringRes get() = when (this) {
         FontChoice.System -> R.string.font_system
-        FontChoice.Thin -> R.string.font_thin
-        FontChoice.Light -> R.string.font_light
         FontChoice.Condensed -> R.string.font_condensed
-        FontChoice.Medium -> R.string.font_medium
         FontChoice.Serif -> R.string.font_serif
         FontChoice.Mono -> R.string.font_mono
         FontChoice.SerifMono -> R.string.font_serif_mono
@@ -57,6 +55,17 @@ val FontChoice.label: Int
         FontChoice.Cursive -> R.string.font_cursive
         FontChoice.SmallCaps -> R.string.font_small_caps
         FontChoice.Custom -> R.string.font_custom
+    }
+
+val TextWeight.label: Int
+    @StringRes get() = when (this) {
+        TextWeight.Thin -> R.string.weight_thin
+        TextWeight.ExtraLight -> R.string.weight_extra_light
+        TextWeight.Light -> R.string.weight_light
+        TextWeight.Regular -> R.string.weight_regular
+        TextWeight.Medium -> R.string.weight_medium
+        TextWeight.SemiBold -> R.string.weight_semibold
+        TextWeight.Bold -> R.string.weight_bold
     }
 
 val Gesture.label: Int

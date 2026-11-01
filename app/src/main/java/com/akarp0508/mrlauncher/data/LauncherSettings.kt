@@ -8,7 +8,12 @@ enum class VerticalPosition { Top, Center, Bottom }
 enum class ItemSpacing { Compact, Normal, Roomy }
 
 enum class FontChoice {
-    System, Thin, Light, Condensed, Medium, Serif, Mono, SerifMono, Casual, Cursive, SmallCaps, Custom,
+    System, Condensed, Serif, Mono, SerifMono, Casual, Cursive, SmallCaps, Custom,
+}
+
+/** CSS-style weights; how many actually differ depends on the font and the device. */
+enum class TextWeight(val value: Int) {
+    Thin(100), ExtraLight(200), Light(300), Regular(400), Medium(500), SemiBold(600), Bold(700),
 }
 
 enum class TemperatureUnit { Celsius, Fahrenheit }
@@ -90,6 +95,8 @@ data class LauncherSettings(
     // Look
     val font: FontChoice = FontChoice.System,
     val customFontPath: String? = null,
+    /** Clock, date, home apps and drawer. */
+    val textWeight: TextWeight = TextWeight.Light,
     /** Menus, settings, dialogs and hints. */
     val textScale: Float = 1f,
     val clockTextScale: Float = 1f,
