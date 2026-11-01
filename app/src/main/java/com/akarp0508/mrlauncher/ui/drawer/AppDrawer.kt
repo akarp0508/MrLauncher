@@ -45,6 +45,7 @@ fun AppDrawer(
     onOpenSettings: () -> Unit,
     alignment: LabelAlignment,
     autoShowKeyboard: Boolean,
+    showIcons: Boolean,
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -125,6 +126,7 @@ fun AppDrawer(
                     onClick = { onAppClick(app) },
                     onLongClick = { onAppLongClick(app) },
                     textAlign = alignment.textAlign,
+                    showIcon = showIcons,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

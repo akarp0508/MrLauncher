@@ -123,7 +123,12 @@ internal fun EditToolbar(editor: HomeEditor, homeApps: List<AppInfo>, modifier: 
  * Emits its rows straight into the caller's Column.
  */
 @Composable
-internal fun EditableHomeApps(apps: List<AppInfo>, alignment: LabelAlignment, editor: HomeEditor) {
+internal fun EditableHomeApps(
+    apps: List<AppInfo>,
+    alignment: LabelAlignment,
+    showIcons: Boolean,
+    editor: HomeEditor,
+) {
     val currentOnReorder by rememberUpdatedState(editor.onReorder)
 
     // Local copy so rows move live while dragging; saved once when the drag ends. One state object
@@ -176,6 +181,7 @@ internal fun EditableHomeApps(apps: List<AppInfo>, alignment: LabelAlignment, ed
                         textAlign = alignment.textAlign,
                         onClick = { editor.onAppClick(app) },
                         onLongClick = { editor.onAppClick(app) },
+                        showIcon = showIcons,
                     )
                 }
                 // Controls are laid over the row's side margins and take on its height.

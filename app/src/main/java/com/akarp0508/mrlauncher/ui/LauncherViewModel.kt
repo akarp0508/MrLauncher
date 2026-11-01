@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.akarp0508.mrlauncher.R
+import com.akarp0508.mrlauncher.data.AppIconLoader
 import com.akarp0508.mrlauncher.data.AppInfo
 import com.akarp0508.mrlauncher.data.AppRepository
 import com.akarp0508.mrlauncher.data.FontChoice
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,6 +55,7 @@ data class LauncherUiState(
 class LauncherViewModel(application: Application) : AndroidViewModel(application) {
 
     private val appRepository = AppRepository(application)
+    val iconLoader = AppIconLoader(application)
     private val settingsRepository = SettingsRepository(application)
     private val weatherRepository = WeatherRepository()
 
@@ -63,7 +66,8 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     private var lastWeatherFetch = 0L
 
     private val labelledApps = combine(
-        appRepository.installedApps,
+        // A change to the app list may come with new icons (e.g. an app update).
+        appRepository.installedApps.onEach { iconLoader.clear() },
         settingsRepository.settings,
     ) { installed, settings ->
         val apps = installed

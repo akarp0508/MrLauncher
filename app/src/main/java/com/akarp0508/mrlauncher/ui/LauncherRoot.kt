@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +23,7 @@ import com.akarp0508.mrlauncher.data.AppInfo
 import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.system.SystemActions
 import com.akarp0508.mrlauncher.ui.components.AppActionsDialog
+import com.akarp0508.mrlauncher.ui.components.LocalAppIconLoader
 import com.akarp0508.mrlauncher.ui.components.RenameDialog
 import com.akarp0508.mrlauncher.ui.drawer.AppDrawer
 import com.akarp0508.mrlauncher.ui.home.HomeEditor
@@ -43,7 +45,9 @@ fun LauncherRoot(viewModel: LauncherViewModel) {
             darkIcons = LauncherTheme.colorsFor(opacity).isDarkText,
             showStatusBar = state.settings.showStatusBar,
         )
-        LauncherContent(state, viewModel)
+        CompositionLocalProvider(LocalAppIconLoader provides viewModel.iconLoader) {
+            LauncherContent(state, viewModel)
+        }
     }
 }
 
@@ -95,6 +99,7 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     onOpenSettings = viewModel::openSettings,
                     alignment = state.settings.drawerAlignment,
                     autoShowKeyboard = state.settings.autoShowKeyboard,
+                showIcons = state.settings.showDrawerIcons,
                 )
                 Screen.Settings -> SettingsScreen(
                     state = state,

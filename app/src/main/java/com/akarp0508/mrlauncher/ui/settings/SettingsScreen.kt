@@ -109,6 +109,11 @@ fun SettingsScreen(
             }
         }
         item {
+            ToggleRow(R.string.settings_app_icons, settings.showHomeIcons) {
+                onUpdate { it.copy(showHomeIcons = !it.showHomeIcons) }
+            }
+        }
+        item {
             ToggleRow(R.string.settings_status_bar, settings.showStatusBar) {
                 onUpdate { it.copy(showStatusBar = !it.showStatusBar) }
             }
@@ -118,6 +123,11 @@ fun SettingsScreen(
         item {
             SettingRow(R.string.settings_alignment, stringResource(settings.drawerAlignment.label)) {
                 onUpdate { it.copy(drawerAlignment = it.drawerAlignment.next()) }
+            }
+        }
+        item {
+            ToggleRow(R.string.settings_app_icons, settings.showDrawerIcons) {
+                onUpdate { it.copy(showDrawerIcons = !it.showDrawerIcons) }
             }
         }
         item {

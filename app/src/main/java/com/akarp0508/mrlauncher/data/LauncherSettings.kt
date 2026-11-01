@@ -85,10 +85,12 @@ data class LauncherSettings(
     val clockAlignment: LabelAlignment = LabelAlignment.Left,
     val homeVerticalPosition: VerticalPosition = VerticalPosition.Center,
     val itemSpacing: ItemSpacing = ItemSpacing.Normal,
+    val showHomeIcons: Boolean = false,
     val showStatusBar: Boolean = true,
 
     // Drawer
     val drawerAlignment: LabelAlignment = LabelAlignment.Left,
+    val showDrawerIcons: Boolean = false,
     val autoLaunchSingleMatch: Boolean = true,
     val autoShowKeyboard: Boolean = true,
 
