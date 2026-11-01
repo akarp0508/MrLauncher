@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -58,8 +60,13 @@ fun AppLabel(
         return
     }
 
-    // Icon a bit taller than the text, on the side the text is aligned to.
-    val iconSize = with(LocalDensity.current) { (style.fontSize * ICON_TO_TEXT).toDp() }
+    // Exactly one line of text tall, so turning icons on never makes rows taller (and fewer
+    // fit). Measured rather than derived from the font size: line height varies per font.
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val iconSize = remember(style, density) {
+        with(density) { measurer.measure("Ag", style, maxLines = 1).size.height.toDp() }
+    }
     val iconAfterText = textAlign == TextAlign.Right || textAlign == TextAlign.End
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -77,8 +84,6 @@ fun AppLabel(
         if (iconAfterText) AppIcon(app, iconSize)
     }
 }
-
-private const val ICON_TO_TEXT = 1.3f
 
 private val TextAlign?.arrangement: Alignment.Horizontal
     get() = when (this) {
