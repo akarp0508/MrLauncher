@@ -30,21 +30,27 @@
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
-    <string name="settings_section_home">Home</string>
-    <string name="settings_section_drawer">App drawer</string>
-    <string name="settings_section_look">Look</string>
-    <string name="settings_section_weather">Weather</string>
-    <string name="settings_section_gestures">Gestures</string>
-    <string name="settings_section_system">System</string>
     <string name="settings_hidden_apps">Hidden apps — tap to unhide</string>
+    <string name="settings_page_home">Home screen</string>
+    <string name="settings_page_home_summary">Apps, layout, icons, margins</string>
+    <string name="settings_page_clock">Clock &amp; date</string>
+    <string name="settings_page_clock_summary">Format, alignment, size</string>
+    <string name="settings_page_weather">Weather</string>
+    <string name="settings_page_weather_summary">Location, icon, units</string>
+    <string name="settings_page_drawer">App drawer</string>
+    <string name="settings_page_drawer_summary">Search, icons, hidden apps</string>
+    <string name="settings_page_appearance">Appearance</string>
+    <string name="settings_page_appearance_summary">Font, colors, background</string>
+    <string name="settings_page_gestures">Gestures</string>
+    <string name="settings_page_gestures_summary">Swipes and taps</string>
+    <string name="settings_page_system">System</string>
+    <string name="settings_page_system_summary">Default launcher, screen lock</string>
     <string name="settings_on">On</string>
     <string name="settings_off">Off</string>
 
-    <string name="settings_clock">Clock</string>
-    <string name="settings_date">Date</string>
+    <string name="settings_clock">Show clock</string>
+    <string name="settings_date">Show date</string>
     <string name="settings_alignment">Alignment</string>
-    <string name="settings_clock_alignment">Clock alignment</string>
-    <string name="settings_app_alignment">App alignment</string>
     <string name="settings_home_position">App position</string>
     <string name="settings_item_spacing">Spacing</string>
     <string name="settings_status_bar">Status bar</string>
@@ -65,12 +71,10 @@
     <string name="weight_medium">Medium</string>
     <string name="weight_semibold">Semibold</string>
     <string name="weight_bold">Bold</string>
-    <string name="settings_section_text_size">Text size</string>
-    <string name="settings_size_clock">Clock</string>
-    <string name="settings_size_date">Date &amp; weather</string>
-    <string name="settings_size_home">Home apps</string>
-    <string name="settings_size_drawer">App drawer</string>
-    <string name="settings_size_other">Menus &amp; settings</string>
+    <string name="settings_text_size">Text size</string>
+    <string name="settings_size_clock">Clock size</string>
+    <string name="settings_size_date">Date &amp; weather size</string>
+    <string name="settings_size_other">Menu text size</string>
     <string name="settings_text_color">Text color</string>
     <string name="settings_accent_color">Accent color</string>
     <string name="settings_background_color">Background color</string>

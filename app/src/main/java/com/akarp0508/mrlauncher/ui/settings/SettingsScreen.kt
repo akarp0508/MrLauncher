@@ -1,10 +1,12 @@
 package com.akarp0508.mrlauncher.ui.settings
 
 import android.net.Uri
-import androidx.annotation.StringRes
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,13 +15,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,21 +34,18 @@ import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.DateStyle
 import com.akarp0508.mrlauncher.data.FontChoice
 import com.akarp0508.mrlauncher.data.Gesture
-import com.akarp0508.mrlauncher.data.TextWeight
 import com.akarp0508.mrlauncher.data.GestureAction
 import com.akarp0508.mrlauncher.data.LauncherSettings
+import com.akarp0508.mrlauncher.data.TextWeight
 import com.akarp0508.mrlauncher.data.WeatherLocation
 import com.akarp0508.mrlauncher.ui.LauncherUiState
 import com.akarp0508.mrlauncher.ui.home.format
-import com.akarp0508.mrlauncher.ui.theme.AccentColorPresets
-import com.akarp0508.mrlauncher.ui.theme.BackgroundColorPresets
-import com.akarp0508.mrlauncher.ui.theme.TextColorPresets
+import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
 import com.akarp0508.mrlauncher.ui.theme.fontFamilyFor
-import kotlin.math.roundToInt
 
-private enum class ColorTarget { Text, Accent, Background }
+internal enum class ColorTarget { Text, Accent, Background }
 
-private sealed interface SettingsDialog {
+internal sealed interface SettingsDialog {
     data object Font : SettingsDialog
     data object Weight : SettingsDialog
     data object DateFormat : SettingsDialog
@@ -57,6 +60,7 @@ private val FontMimeTypes = arrayOf(
     "application/vnd.ms-opentype", "application/octet-stream",
 )
 
+/** A menu of [SettingsPage]s; each opens a short page of related settings. */
 @Composable
 fun SettingsScreen(
     state: LauncherUiState,
@@ -70,246 +74,43 @@ fun SettingsScreen(
     onOpenAccessibilitySettings: () -> Unit,
 ) {
     val settings = state.settings
-    // For the date format samples; settings isn't open long enough for this to go stale.
     val now = remember { System.currentTimeMillis() }
+    var page by rememberSaveable { mutableStateOf<SettingsPage?>(null) }
     var dialog by remember { mutableStateOf<SettingsDialog?>(null) }
     val fontPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let(onImportFont)
     }
+    // Registered after the launcher's own back handler, so it wins while a page is open.
+    BackHandler(enabled = page != null) { page = null }
+
+    val listState = rememberLazyListState()
+    LaunchedEffect(page) { listState.scrollToItem(0) }
+
+    val scope = SettingsPageScope(
+        state = state,
+        onUpdate = onUpdate,
+        openDialog = { dialog = it },
+        onEditHome = onEditHome,
+        onSetDefaultLauncher = onSetDefaultLauncher,
+        onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+        now = now,
+    )
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .systemBarsPadding()
             .padding(horizontal = 32.dp),
     ) {
-        item {
-            Text(
-                text = stringResource(R.string.settings_title),
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 24.dp),
-            )
-        }
-
-        item { SectionHeader(R.string.settings_section_home) }
-        item { SettingRow(R.string.settings_edit_home, value = null, onClick = onEditHome) }
-        item { ToggleRow(R.string.settings_clock, settings.showClock) { onUpdate { it.copy(showClock = !it.showClock) } } }
-        item { ToggleRow(R.string.settings_date, settings.showDate) { onUpdate { it.copy(showDate = !it.showDate) } } }
-        item {
-            SettingRow(R.string.settings_date_format, settings.dateStyle.format(now)) {
-                dialog = SettingsDialog.DateFormat
+        item { PageTitle(page, onBack = { page = null }) }
+        val current = page
+        if (current == null) {
+            items(SettingsPage.entries) { entry ->
+                PageLink(entry, summary = pageSummary(entry, settings)) { page = entry }
             }
-        }
-        item {
-            SettingRow(R.string.settings_clock_alignment, stringResource(settings.clockAlignment.label)) {
-                onUpdate { it.copy(clockAlignment = it.clockAlignment.next()) }
-            }
-        }
-        item {
-            SettingRow(R.string.settings_app_alignment, stringResource(settings.homeAlignment.label)) {
-                onUpdate { it.copy(homeAlignment = it.homeAlignment.next()) }
-            }
-        }
-        item {
-            SettingRow(R.string.settings_home_position, stringResource(settings.homeVerticalPosition.label)) {
-                onUpdate { it.copy(homeVerticalPosition = it.homeVerticalPosition.next()) }
-            }
-        }
-        item {
-            SettingRow(R.string.settings_item_spacing, stringResource(settings.itemSpacing.label)) {
-                onUpdate { it.copy(itemSpacing = it.itemSpacing.next()) }
-            }
-        }
-        item {
-            SettingRow(R.string.settings_app_icons, stringResource(settings.homeIcons.label)) {
-                onUpdate { it.copy(homeIcons = it.homeIcons.next()) }
-            }
-        }
-        item {
-            MarginRow(R.string.settings_side_margin, settings.homeSideMargin, MAX_SIDE_MARGIN) { delta ->
-                onUpdate { it.copy(homeSideMargin = it.homeSideMargin.stepMargin(delta, MAX_SIDE_MARGIN)) }
-            }
-        }
-        item {
-            MarginRow(R.string.settings_vertical_margin, settings.homeVerticalMargin, MAX_VERTICAL_MARGIN) { delta ->
-                onUpdate { it.copy(homeVerticalMargin = it.homeVerticalMargin.stepMargin(delta, MAX_VERTICAL_MARGIN)) }
-            }
-        }
-        item {
-            ToggleRow(R.string.settings_status_bar, settings.showStatusBar) {
-                onUpdate { it.copy(showStatusBar = !it.showStatusBar) }
-            }
-        }
-
-        item { SectionHeader(R.string.settings_section_drawer) }
-        item {
-            SettingRow(R.string.settings_alignment, stringResource(settings.drawerAlignment.label)) {
-                onUpdate { it.copy(drawerAlignment = it.drawerAlignment.next()) }
-            }
-        }
-        item {
-            SettingRow(R.string.settings_app_icons, stringResource(settings.drawerIcons.label)) {
-                onUpdate { it.copy(drawerIcons = it.drawerIcons.next()) }
-            }
-        }
-        item {
-            MarginRow(R.string.settings_side_margin, settings.drawerSideMargin, MAX_SIDE_MARGIN) { delta ->
-                onUpdate { it.copy(drawerSideMargin = it.drawerSideMargin.stepMargin(delta, MAX_SIDE_MARGIN)) }
-            }
-        }
-        item {
-            ToggleRow(R.string.settings_auto_keyboard, settings.autoShowKeyboard) {
-                onUpdate { it.copy(autoShowKeyboard = !it.autoShowKeyboard) }
-            }
-        }
-        item {
-            ToggleRow(R.string.settings_auto_launch, settings.autoLaunchSingleMatch) {
-                onUpdate { it.copy(autoLaunchSingleMatch = !it.autoLaunchSingleMatch) }
-            }
-        }
-
-        item { SectionHeader(R.string.settings_section_look) }
-        item {
-            SettingRow(
-                title = R.string.settings_font,
-                value = stringResource(settings.font.label),
-                onClick = { dialog = SettingsDialog.Font },
-            )
-        }
-        item {
-            SettingRow(
-                title = R.string.settings_font_weight,
-                value = stringResource(settings.textWeight.label),
-                valueStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight(settings.textWeight.value)),
-                onClick = { dialog = SettingsDialog.Weight },
-            )
-        }
-        item {
-            ColorRow(
-                title = R.string.settings_text_color,
-                selected = settings.textColor,
-                presets = TextColorPresets,
-                allowAuto = true,
-                onSelect = { color -> onUpdate { it.copy(textColor = color) } },
-                onCustom = { dialog = SettingsDialog.CustomColor(ColorTarget.Text) },
-            )
-        }
-        item {
-            ColorRow(
-                title = R.string.settings_accent_color,
-                selected = settings.accentColor,
-                presets = AccentColorPresets,
-                allowAuto = false,
-                onSelect = { color -> onUpdate { it.copy(accentColor = color) } },
-                onCustom = { dialog = SettingsDialog.CustomColor(ColorTarget.Accent) },
-            )
-        }
-        item {
-            ColorRow(
-                title = R.string.settings_background_color,
-                selected = settings.backgroundColor,
-                presets = BackgroundColorPresets,
-                allowAuto = false,
-                onSelect = { color -> onUpdate { it.copy(backgroundColor = color) } },
-                onCustom = { dialog = SettingsDialog.CustomColor(ColorTarget.Background) },
-            )
-        }
-        item {
-            StepperRow(
-                title = R.string.settings_home_background,
-                value = stringResource(R.string.percent, (settings.homeBackgroundAlpha * 100).roundToInt()),
-                onDecrease = { onUpdate { it.copy(homeBackgroundAlpha = stepped(it.homeBackgroundAlpha, -0.1f, 0f, 1f)) } },
-                onIncrease = { onUpdate { it.copy(homeBackgroundAlpha = stepped(it.homeBackgroundAlpha, 0.1f, 0f, 1f)) } },
-            )
-        }
-        item {
-            StepperRow(
-                title = R.string.settings_drawer_background,
-                value = stringResource(R.string.percent, (settings.drawerBackgroundAlpha * 100).roundToInt()),
-                onDecrease = { onUpdate { it.copy(drawerBackgroundAlpha = stepped(it.drawerBackgroundAlpha, -0.1f, 0f, 1f)) } },
-                onIncrease = { onUpdate { it.copy(drawerBackgroundAlpha = stepped(it.drawerBackgroundAlpha, 0.1f, 0f, 1f)) } },
-            )
-        }
-
-        item { SectionHeader(R.string.settings_section_text_size) }
-        item {
-            TextSizeRow(R.string.settings_size_clock, settings.clockTextScale) { delta ->
-                onUpdate { it.copy(clockTextScale = stepped(it.clockTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
-            }
-        }
-        item {
-            TextSizeRow(R.string.settings_size_date, settings.dateTextScale) { delta ->
-                onUpdate { it.copy(dateTextScale = stepped(it.dateTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
-            }
-        }
-        item {
-            TextSizeRow(R.string.settings_size_home, settings.homeTextScale) { delta ->
-                onUpdate { it.copy(homeTextScale = stepped(it.homeTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
-            }
-        }
-        item {
-            TextSizeRow(R.string.settings_size_drawer, settings.drawerTextScale) { delta ->
-                onUpdate { it.copy(drawerTextScale = stepped(it.drawerTextScale, delta, MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
-            }
-        }
-        item {
-            // Capped lower than the rest: settings and dialogs stop fitting the screen beyond this.
-            TextSizeRow(R.string.settings_size_other, settings.textScale) { delta ->
-                onUpdate { it.copy(textScale = stepped(it.textScale, delta, MIN_TEXT_SCALE, 1.6f)) }
-            }
-        }
-
-        item { SectionHeader(R.string.settings_section_weather) }
-        item {
-            ToggleRow(R.string.settings_weather, settings.showWeather) {
-                if (!settings.showWeather && settings.weatherLocation == null) {
-                    // Nothing to show yet; picking a place turns weather on.
-                    dialog = SettingsDialog.WeatherLocationPicker
-                } else {
-                    onUpdate { it.copy(showWeather = !it.showWeather) }
-                }
-            }
-        }
-        item {
-            SettingRow(
-                R.string.settings_weather_location,
-                settings.weatherLocation?.name ?: stringResource(R.string.settings_weather_location_none),
-            ) { dialog = SettingsDialog.WeatherLocationPicker }
-        }
-        item {
-            SettingRow(R.string.settings_weather_icon, stringResource(settings.weatherIcon.label)) {
-                onUpdate { it.copy(weatherIcon = it.weatherIcon.next()) }
-            }
-        }
-        item {
-            SettingRow(R.string.settings_weather_units, stringResource(settings.temperatureUnit.label)) {
-                onUpdate { it.copy(temperatureUnit = it.temperatureUnit.next()) }
-            }
-        }
-
-        item { SectionHeader(R.string.settings_section_gestures) }
-        items(Gesture.entries) { gesture ->
-            SettingRow(gesture.label, settings.gestureAction(gesture).label(state.allApps)) {
-                dialog = SettingsDialog.GestureActionPicker(gesture)
-            }
-        }
-
-        item { SectionHeader(R.string.settings_section_system) }
-        item { SettingRow(R.string.settings_default_launcher, value = null, onClick = onSetDefaultLauncher) }
-        item { SettingRow(R.string.settings_lock_service, value = null, onClick = onOpenAccessibilitySettings) }
-
-        if (state.hiddenApps.isNotEmpty()) {
-            item { SectionHeader(R.string.settings_hidden_apps) }
-            items(state.hiddenApps, key = { it.key }) { app ->
-                Text(
-                    text = app.label,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onUpdate { it.copy(hiddenApps = it.hiddenApps - app.key) } }
-                        .padding(vertical = 12.dp),
-                )
-            }
+        } else {
+            settingsPage(current, scope)
         }
         item { Spacer(Modifier.height(48.dp)) }
     }
@@ -417,37 +218,45 @@ fun SettingsScreen(
     }
 }
 
-private const val MIN_TEXT_SCALE = 0.5f
-private const val MAX_TEXT_SCALE = 2f
-
-/** A percentage stepper; [onStep] gets +0.1 or -0.1. */
 @Composable
-private fun TextSizeRow(@StringRes title: Int, scale: Float, onStep: (delta: Float) -> Unit) {
-    StepperRow(
-        title = title,
-        value = stringResource(R.string.percent, (scale * 100).roundToInt()),
-        onDecrease = { onStep(-0.1f) },
-        onIncrease = { onStep(0.1f) },
-    )
+private fun PageTitle(page: SettingsPage?, onBack: () -> Unit) {
+    val style = MaterialTheme.typography.headlineSmall
+    if (page == null) {
+        Text(stringResource(R.string.settings_title), style = style, modifier = Modifier.padding(top = 24.dp, bottom = 16.dp))
+        return
+    }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable(onClick = onBack)
+            .padding(top = 24.dp, bottom = 16.dp),
+    ) {
+        Text("‹ ", style = style, color = LauncherTheme.colors.accent)
+        Text(stringResource(page.title), style = style)
+    }
 }
 
-/** A margin stepper in [MARGIN_STEP] dp steps; [onStep] gets the signed step. */
 @Composable
-private fun MarginRow(@StringRes title: Int, value: Int, max: Int, onStep: (delta: Int) -> Unit) {
-    StepperRow(
-        title = title,
-        value = stringResource(R.string.margin_dp, value),
-        onDecrease = { if (value > 0) onStep(-MARGIN_STEP) },
-        onIncrease = { if (value < max) onStep(MARGIN_STEP) },
-    )
+private fun PageLink(page: SettingsPage, summary: String, onClick: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 12.dp),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(page.title), style = MaterialTheme.typography.bodyLarge)
+            Text(summary, style = MaterialTheme.typography.labelLarge, color = LauncherTheme.colors.textDim, maxLines = 1)
+        }
+        Text("›", style = MaterialTheme.typography.bodyLarge, color = LauncherTheme.colors.textDim)
+    }
 }
 
-private const val MARGIN_STEP = 4
-private const val MAX_SIDE_MARGIN = 64
-private const val MAX_VERTICAL_MARGIN = 96
-
-private fun Int.stepMargin(delta: Int, max: Int) = (this + delta).coerceIn(0, max)
-
-/** Steps by [delta] and rounds to one decimal, so repeated taps don't drift (0.7999…). */
-private fun stepped(value: Float, delta: Float, min: Float, max: Float): Float =
-    ((value + delta).coerceIn(min, max) * 10).roundToInt() / 10f
+/** Weather shows its current state; other pages describe what's inside. */
+@Composable
+private fun pageSummary(page: SettingsPage, settings: LauncherSettings): String = when {
+    page == SettingsPage.Weather && !settings.showWeather -> stringResource(R.string.settings_off)
+    page == SettingsPage.Weather -> settings.weatherLocation?.name ?: stringResource(page.summary)
+    else -> stringResource(page.summary)
+}
