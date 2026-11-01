@@ -24,7 +24,7 @@ import com.akarp0508.mrlauncher.system.SystemActions
 import com.akarp0508.mrlauncher.ui.components.AppActionsDialog
 import com.akarp0508.mrlauncher.ui.components.RenameDialog
 import com.akarp0508.mrlauncher.ui.drawer.AppDrawer
-import com.akarp0508.mrlauncher.ui.home.EditHomeScreen
+import com.akarp0508.mrlauncher.ui.home.HomeEditor
 import com.akarp0508.mrlauncher.ui.home.HomeScreen
 import com.akarp0508.mrlauncher.ui.settings.SettingsScreen
 import com.akarp0508.mrlauncher.ui.theme.LauncherSurface
@@ -60,10 +60,12 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
         targetState = state.screen,
         transitionSpec = { fadeIn() togetherWith fadeOut() },
         label = "screen",
+        // Home and its edit mode are one screen: toggling edit mode shouldn't cross-fade.
+        contentKey = { if (it == Screen.EditHome) Screen.Home else it },
     ) { screen ->
         LauncherSurface(opacity = state.settings.backgroundOpacity(screen)) {
             when (screen) {
-                Screen.Home -> HomeScreen(
+                Screen.Home, Screen.EditHome -> HomeScreen(
                     apps = state.homeApps,
                     weather = state.weather,
                     settings = state.settings,
@@ -72,15 +74,17 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     onGesture = viewModel::onGesture,
                     onWeatherClick = { viewModel.refreshWeather(force = true) },
                     onEditHome = viewModel::editHome,
-                )
-                Screen.EditHome -> EditHomeScreen(
-                    homeApps = state.homeApps,
-                    availableApps = state.allApps.filterNot { it.key in state.settings.hiddenApps },
-                    alignment = state.settings.homeAlignment,
-                    onReorder = viewModel::setHomeOrder,
-                    onToggleApp = viewModel::toggleHomeApp,
-                    onAppClick = { actionsFor = it },
-                    onDone = viewModel::goHome,
+                    editor = if (screen == Screen.EditHome) {
+                        HomeEditor(
+                            availableApps = state.allApps.filterNot { it.key in state.settings.hiddenApps },
+                            onReorder = viewModel::setHomeOrder,
+                            onToggleApp = viewModel::toggleHomeApp,
+                            onAppClick = { actionsFor = it },
+                            onDone = viewModel::goHome,
+                        )
+                    } else {
+                        null
+                    },
                 )
                 Screen.Drawer -> AppDrawer(
                     apps = state.drawerApps,
@@ -130,9 +134,8 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
 }
 
 private fun LauncherSettings.backgroundOpacity(screen: Screen): Float = when (screen) {
-    Screen.Home -> homeBackgroundAlpha
-    // Edit mode is a working screen, so it gets the drawer's (usually more opaque) background.
-    Screen.EditHome, Screen.Drawer, Screen.Settings -> drawerBackgroundAlpha
+    Screen.Home, Screen.EditHome -> homeBackgroundAlpha
+    Screen.Drawer, Screen.Settings -> drawerBackgroundAlpha
 }
 
 @Composable

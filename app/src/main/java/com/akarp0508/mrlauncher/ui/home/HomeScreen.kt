@@ -3,6 +3,7 @@ package com.akarp0508.mrlauncher.ui.home
 import android.text.format.DateFormat
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,14 @@ import kotlinx.coroutines.delay
 import java.util.Date
 import java.util.Locale
 
+/** Side margins of the home screen; edit mode puts its controls inside them. */
+internal val HomeHorizontalPadding = 32.dp
+internal val HomeVerticalPadding = 48.dp
+
+/**
+ * The home screen. With an [editor] it becomes edit mode: same layout, but gestures are off and
+ * apps get reorder/remove controls, so what you arrange is what you get.
+ */
 @Composable
 fun HomeScreen(
     apps: List<AppInfo>,
@@ -46,6 +55,7 @@ fun HomeScreen(
     onGesture: (Gesture) -> Unit,
     onWeatherClick: () -> Unit,
     onEditHome: () -> Unit,
+    editor: HomeEditor? = null,
 ) {
     val alignment = when (settings.homeAlignment) {
         LabelAlignment.Left -> AbsoluteAlignment.Left
@@ -54,44 +64,57 @@ fun HomeScreen(
     }
     val textAlign = settings.homeAlignment.textAlign
     val position = settings.homeVerticalPosition
+    val sidePadding = Modifier.padding(horizontal = HomeHorizontalPadding)
 
-    Column(
-        horizontalAlignment = alignment,
-        modifier = Modifier
-            .fillMaxSize()
-            .homeGestures(onGesture, onLongPress = onEditHome)
-            .systemBarsPadding()
-            .padding(horizontal = 32.dp, vertical = 48.dp),
-    ) {
-        Header(
-            showTime = settings.showClock,
-            showDate = settings.showDate,
-            weather = weather,
+    Box(Modifier.fillMaxSize()) {
+        Column(
             horizontalAlignment = alignment,
-            onClockClick = { onGesture(Gesture.ClockTap) },
-            onDateClick = { onGesture(Gesture.DateTap) },
-            onWeatherClick = onWeatherClick,
-        )
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (editor == null) Modifier.homeGestures(onGesture, onLongPress = onEditHome) else Modifier)
+                .systemBarsPadding()
+                .padding(vertical = HomeVerticalPadding),
+        ) {
+            Header(
+                showTime = settings.showClock,
+                showDate = settings.showDate,
+                weather = weather,
+                horizontalAlignment = alignment,
+                interactive = editor == null,
+                onClockClick = { onGesture(Gesture.ClockTap) },
+                onDateClick = { onGesture(Gesture.DateTap) },
+                onWeatherClick = onWeatherClick,
+                modifier = sidePadding,
+            )
 
-        if (position == VerticalPosition.Top) Spacer(Modifier.height(48.dp)) else Spacer(Modifier.weight(1f))
-        if (apps.isEmpty()) {
-            Text(
-                text = stringResource(R.string.home_empty_hint),
-                style = MaterialTheme.typography.labelLarge,
-                color = LauncherTheme.colors.textDim,
-                textAlign = textAlign,
-            )
+            if (position == VerticalPosition.Top) Spacer(Modifier.height(48.dp)) else Spacer(Modifier.weight(1f))
+            if (editor != null) {
+                EditableHomeApps(apps, settings.homeAlignment, editor)
+            } else {
+                if (apps.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.home_empty_hint),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = LauncherTheme.colors.textDim,
+                        textAlign = textAlign,
+                        modifier = sidePadding,
+                    )
+                }
+                apps.forEach { app ->
+                    AppLabel(
+                        app = app,
+                        style = LauncherTheme.textStyles.homeApp,
+                        textAlign = textAlign,
+                        onClick = { onAppClick(app) },
+                        onLongClick = { onAppLongClick(app) },
+                        modifier = sidePadding,
+                    )
+                }
+            }
+            if (position != VerticalPosition.Bottom) Spacer(Modifier.weight(1f))
         }
-        apps.forEach { app ->
-            AppLabel(
-                app = app,
-                style = LauncherTheme.textStyles.homeApp,
-                textAlign = textAlign,
-                onClick = { onAppClick(app) },
-                onLongClick = { onAppLongClick(app) },
-            )
-        }
-        if (position != VerticalPosition.Bottom) Spacer(Modifier.weight(1f))
+
+        if (editor != null) EditToolbar(onDone = editor.onDone, modifier = Modifier.align(Alignment.TopCenter))
     }
 }
 
@@ -101,9 +124,12 @@ private fun Header(
     showDate: Boolean,
     weather: Weather?,
     horizontalAlignment: Alignment.Horizontal,
+    /** False in edit mode: the header is shown for layout only. */
+    interactive: Boolean,
     onClockClick: () -> Unit,
     onDateClick: () -> Unit,
     onWeatherClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val now by produceState(System.currentTimeMillis()) {
@@ -119,16 +145,20 @@ private fun Header(
     }
     val dim = LauncherTheme.colors.textDim
 
-    Column(horizontalAlignment = horizontalAlignment) {
+    Column(horizontalAlignment = horizontalAlignment, modifier = modifier) {
         if (showTime) {
-            Text(time, style = LauncherTheme.textStyles.clock, modifier = Modifier.clickable(onClick = onClockClick))
+            Text(
+                time,
+                style = LauncherTheme.textStyles.clock,
+                modifier = Modifier.clickable(enabled = interactive, onClick = onClockClick),
+            )
         }
         if (showDate) {
             Text(
                 date,
                 style = LauncherTheme.textStyles.date,
                 color = dim,
-                modifier = Modifier.clickable(onClick = onDateClick),
+                modifier = Modifier.clickable(enabled = interactive, onClick = onDateClick),
             )
         }
         if (weather != null) {
@@ -136,7 +166,7 @@ private fun Header(
                 text = stringResource(R.string.weather_format, weather.temperature, stringResource(weatherDescription(weather.code))),
                 style = LauncherTheme.textStyles.date,
                 color = dim,
-                modifier = Modifier.clickable(onClick = onWeatherClick),
+                modifier = Modifier.clickable(enabled = interactive, onClick = onWeatherClick),
             )
         }
     }
