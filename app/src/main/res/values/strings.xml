@@ -43,6 +43,8 @@
     <string name="settings_clock">Clock</string>
     <string name="settings_date">Date</string>
     <string name="settings_alignment">Alignment</string>
+    <string name="settings_clock_alignment">Clock alignment</string>
+    <string name="settings_app_alignment">App alignment</string>
     <string name="settings_home_position">App position</string>
     <string name="settings_item_spacing">Spacing</string>
     <string name="settings_status_bar">Status bar</string>

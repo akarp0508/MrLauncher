@@ -74,7 +74,10 @@ data class LauncherSettings(
     // Home layout
     val showClock: Boolean = true,
     val showDate: Boolean = true,
+    /** Home app list. */
     val homeAlignment: LabelAlignment = LabelAlignment.Left,
+    /** Clock, date and weather. */
+    val clockAlignment: LabelAlignment = LabelAlignment.Left,
     val homeVerticalPosition: VerticalPosition = VerticalPosition.Center,
     val itemSpacing: ItemSpacing = ItemSpacing.Normal,
     val showStatusBar: Boolean = true,

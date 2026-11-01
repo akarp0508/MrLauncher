@@ -36,6 +36,9 @@ class SettingsRepository(private val context: Context) {
             showClock = this[SHOW_CLOCK] ?: defaults.showClock,
             showDate = this[SHOW_DATE] ?: defaults.showDate,
             homeAlignment = this[HOME_ALIGNMENT].migrateAlignment().toEnum(defaults.homeAlignment),
+            // Until set separately, the clock keeps following the alignment the apps had.
+            clockAlignment = (this[CLOCK_ALIGNMENT] ?: this[HOME_ALIGNMENT])
+                .migrateAlignment().toEnum(defaults.clockAlignment),
             homeVerticalPosition = this[HOME_POSITION].toEnum(defaults.homeVerticalPosition),
             itemSpacing = this[ITEM_SPACING].toEnum(defaults.itemSpacing),
             showStatusBar = this[SHOW_STATUS_BAR] ?: defaults.showStatusBar,
@@ -74,6 +77,7 @@ class SettingsRepository(private val context: Context) {
         this[SHOW_CLOCK] = settings.showClock
         this[SHOW_DATE] = settings.showDate
         this[HOME_ALIGNMENT] = settings.homeAlignment.name
+        this[CLOCK_ALIGNMENT] = settings.clockAlignment.name
         this[HOME_POSITION] = settings.homeVerticalPosition.name
         this[ITEM_SPACING] = settings.itemSpacing.name
         this[SHOW_STATUS_BAR] = settings.showStatusBar
@@ -136,6 +140,7 @@ class SettingsRepository(private val context: Context) {
         val SHOW_CLOCK = booleanPreferencesKey("show_clock")
         val SHOW_DATE = booleanPreferencesKey("show_date")
         val HOME_ALIGNMENT = stringPreferencesKey("alignment")
+        val CLOCK_ALIGNMENT = stringPreferencesKey("clock_alignment")
         val HOME_POSITION = stringPreferencesKey("home_position")
         val ITEM_SPACING = stringPreferencesKey("item_spacing")
         val SHOW_STATUS_BAR = booleanPreferencesKey("show_status_bar")

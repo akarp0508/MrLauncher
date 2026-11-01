@@ -4,6 +4,8 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.AbsoluteAlignment
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -47,6 +49,13 @@ fun AppLabel(
             .padding(vertical = LauncherTheme.itemSpacing),
     )
 }
+
+val LabelAlignment.horizontal: Alignment.Horizontal
+    get() = when (this) {
+        LabelAlignment.Left -> AbsoluteAlignment.Left
+        LabelAlignment.Center -> Alignment.CenterHorizontally
+        LabelAlignment.Right -> AbsoluteAlignment.Right
+    }
 
 val LabelAlignment.textAlign: TextAlign
     get() = when (this) {

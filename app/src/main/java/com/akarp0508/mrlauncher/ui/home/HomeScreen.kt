@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,12 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.akarp0508.mrlauncher.R
 import com.akarp0508.mrlauncher.data.AppInfo
 import com.akarp0508.mrlauncher.data.Gesture
-import com.akarp0508.mrlauncher.data.LabelAlignment
 import com.akarp0508.mrlauncher.data.LauncherSettings
 import com.akarp0508.mrlauncher.data.VerticalPosition
 import com.akarp0508.mrlauncher.data.Weather
 import com.akarp0508.mrlauncher.ui.components.AppLabel
 import com.akarp0508.mrlauncher.ui.components.homeGestures
+import com.akarp0508.mrlauncher.ui.components.horizontal
 import com.akarp0508.mrlauncher.ui.components.textAlign
 import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
 import kotlinx.coroutines.delay
@@ -57,11 +56,8 @@ fun HomeScreen(
     onEditHome: () -> Unit,
     editor: HomeEditor? = null,
 ) {
-    val alignment = when (settings.homeAlignment) {
-        LabelAlignment.Left -> AbsoluteAlignment.Left
-        LabelAlignment.Center -> Alignment.CenterHorizontally
-        LabelAlignment.Right -> AbsoluteAlignment.Right
-    }
+    val alignment = settings.homeAlignment.horizontal
+    val clockAlignment = settings.clockAlignment.horizontal
     val textAlign = settings.homeAlignment.textAlign
     val position = settings.homeVerticalPosition
     val sidePadding = Modifier.padding(horizontal = HomeHorizontalPadding)
@@ -79,12 +75,12 @@ fun HomeScreen(
                 showTime = settings.showClock,
                 showDate = settings.showDate,
                 weather = weather,
-                horizontalAlignment = alignment,
+                horizontalAlignment = clockAlignment,
                 interactive = editor == null,
                 onClockClick = { onGesture(Gesture.ClockTap) },
                 onDateClick = { onGesture(Gesture.DateTap) },
                 onWeatherClick = onWeatherClick,
-                modifier = sidePadding,
+                modifier = sidePadding.align(clockAlignment),
             )
 
             if (position == VerticalPosition.Top) Spacer(Modifier.height(48.dp)) else Spacer(Modifier.weight(1f))

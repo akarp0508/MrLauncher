@@ -86,7 +86,12 @@ fun SettingsScreen(
         item { ToggleRow(R.string.settings_clock, settings.showClock) { onUpdate { it.copy(showClock = !it.showClock) } } }
         item { ToggleRow(R.string.settings_date, settings.showDate) { onUpdate { it.copy(showDate = !it.showDate) } } }
         item {
-            SettingRow(R.string.settings_alignment, stringResource(settings.homeAlignment.label)) {
+            SettingRow(R.string.settings_clock_alignment, stringResource(settings.clockAlignment.label)) {
+                onUpdate { it.copy(clockAlignment = it.clockAlignment.next()) }
+            }
+        }
+        item {
+            SettingRow(R.string.settings_app_alignment, stringResource(settings.homeAlignment.label)) {
                 onUpdate { it.copy(homeAlignment = it.homeAlignment.next()) }
             }
         }
