@@ -2,11 +2,14 @@ package com.akarp0508.mrlauncher.system
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.app.SearchManager
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.provider.AlarmClock
 import android.provider.Settings
 import android.widget.Toast
+import androidx.core.net.toUri
 import com.akarp0508.mrlauncher.R
 
 object SystemActions {
@@ -20,6 +23,35 @@ object SystemActions {
     fun openCalendar(context: Context) = start(
         context,
         Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_CALENDAR),
+    )
+
+    /**
+     * Android has no standard "weather app" intent, so try well-known weather apps, then fall back
+     * to a web search for the weather in [place], which most search apps answer with a forecast.
+     */
+    fun openWeather(context: Context, place: String?) {
+        val launch = WeatherApps.firstNotNullOfOrNull { context.packageManager.getLaunchIntentForPackage(it) }
+        if (launch != null) {
+            start(context, launch)
+            return
+        }
+        val query = listOfNotNull(context.getString(R.string.weather_search_query), place).joinToString(" ")
+        val search = Intent(Intent.ACTION_WEB_SEARCH).putExtra(SearchManager.QUERY, query)
+        if (!start(context, search)) {
+            start(context, Intent(Intent.ACTION_VIEW, "https://www.google.com/search?q=${Uri.encode(query)}".toUri()))
+        }
+    }
+
+    // Most specific first: a phone's own weather app beats one that just happens to be installed.
+    private val WeatherApps = listOf(
+        "com.google.android.apps.weather", // Pixel Weather
+        "com.sec.android.daemonapp", // Samsung
+        "com.miui.weather2", // Xiaomi
+        "net.oneplus.weather", // OnePlus
+        "com.huawei.android.totemweather", // Huawei
+        "com.accuweather.android",
+        "com.weather.Weather", // The Weather Channel
+        "org.breezyweather",
     )
 
     fun openDefaultLauncherSettings(context: Context) =
@@ -48,7 +80,7 @@ object SystemActions {
         }
     }
 
-    private fun start(context: Context, intent: Intent) {
-        runCatching { context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
-    }
+    /** False if nothing could handle [intent]. */
+    private fun start(context: Context, intent: Intent): Boolean =
+        runCatching { context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }.isSuccess
 }

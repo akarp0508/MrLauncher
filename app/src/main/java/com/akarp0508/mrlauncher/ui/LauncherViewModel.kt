@@ -158,6 +158,9 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             GestureAction.LockScreen -> SystemActions.lockScreen(context)
             GestureAction.Alarms -> SystemActions.openAlarms(context)
             GestureAction.Calendar -> SystemActions.openCalendar(context)
+            GestureAction.WeatherApp ->
+                SystemActions.openWeather(context, uiState.value.settings.weatherLocation?.name)
+            GestureAction.RefreshWeather -> refreshWeather(force = true)
             is GestureAction.OpenApp ->
                 uiState.value.allApps.firstOrNull { it.key == action.appKey }?.let(::launch)
         }

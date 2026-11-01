@@ -30,7 +30,7 @@ enum class TextWeight(val value: Int) {
 
 enum class TemperatureUnit { Celsius, Fahrenheit }
 
-enum class Gesture { SwipeUp, SwipeDown, SwipeLeft, SwipeRight, DoubleTap, ClockTap, DateTap }
+enum class Gesture { SwipeUp, SwipeDown, SwipeLeft, SwipeRight, DoubleTap, ClockTap, DateTap, WeatherTap }
 
 sealed interface GestureAction {
     /** Persisted form; must stay stable across releases. */
@@ -45,6 +45,8 @@ sealed interface GestureAction {
     data object EditHome : GestureAction { override val id = "edit_home" }
     data object Alarms : GestureAction { override val id = "alarms" }
     data object Calendar : GestureAction { override val id = "calendar" }
+    data object WeatherApp : GestureAction { override val id = "weather_app" }
+    data object RefreshWeather : GestureAction { override val id = "refresh_weather" }
     data class OpenApp(val appKey: String) : GestureAction {
         override val id get() = APP_PREFIX + appKey
     }
@@ -55,6 +57,7 @@ sealed interface GestureAction {
         /** Everything except [OpenApp], which needs an app picked. */
         val simpleActions = listOf(
             None, OpenDrawer, Notifications, QuickSettings, LockScreen, OpenSettings, EditHome, Alarms, Calendar,
+            WeatherApp, RefreshWeather,
         )
 
         fun fromId(id: String?): GestureAction? = when {
@@ -73,6 +76,7 @@ val DefaultGestures: Map<Gesture, GestureAction> = mapOf(
     Gesture.DoubleTap to GestureAction.None,
     Gesture.ClockTap to GestureAction.Alarms,
     Gesture.DateTap to GestureAction.Calendar,
+    Gesture.WeatherTap to GestureAction.WeatherApp,
 )
 
 data class WeatherLocation(val name: String, val latitude: Double, val longitude: Double)

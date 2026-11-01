@@ -55,7 +55,6 @@ fun HomeScreen(
     onAppClick: (AppInfo) -> Unit,
     onAppLongClick: (AppInfo) -> Unit,
     onGesture: (Gesture) -> Unit,
-    onWeatherClick: () -> Unit,
     onEditHome: () -> Unit,
     editor: HomeEditor? = null,
 ) {
@@ -87,7 +86,7 @@ fun HomeScreen(
                 interactive = editor == null,
                 onClockClick = { onGesture(Gesture.ClockTap) },
                 onDateClick = { onGesture(Gesture.DateTap) },
-                onWeatherClick = onWeatherClick,
+                onWeatherClick = { onGesture(Gesture.WeatherTap) },
                 modifier = sidePadding.align(clockAlignment),
             )
 

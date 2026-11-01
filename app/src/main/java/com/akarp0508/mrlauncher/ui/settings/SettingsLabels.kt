@@ -85,6 +85,7 @@ val Gesture.label: Int
         Gesture.DoubleTap -> R.string.gesture_double_tap
         Gesture.ClockTap -> R.string.gesture_clock_tap
         Gesture.DateTap -> R.string.gesture_date_tap
+        Gesture.WeatherTap -> R.string.gesture_weather_tap
     }
 
 @Composable
@@ -98,6 +99,8 @@ fun GestureAction.label(apps: List<AppInfo>): String = when (this) {
     GestureAction.EditHome -> stringResource(R.string.gesture_action_edit_home)
     GestureAction.Alarms -> stringResource(R.string.gesture_action_alarms)
     GestureAction.Calendar -> stringResource(R.string.gesture_action_calendar)
+    GestureAction.WeatherApp -> stringResource(R.string.gesture_action_weather_app)
+    GestureAction.RefreshWeather -> stringResource(R.string.gesture_action_refresh_weather)
     is GestureAction.OpenApp -> apps.firstOrNull { it.key == appKey }?.label
         ?: stringResource(R.string.gesture_action_missing_app)
 }

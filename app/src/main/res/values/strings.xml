@@ -121,6 +121,7 @@
     <string name="gesture_double_tap">Double tap</string>
     <string name="gesture_clock_tap">Tap clock</string>
     <string name="gesture_date_tap">Tap date</string>
+    <string name="gesture_weather_tap">Tap weather</string>
     <string name="gesture_action_none">Nothing</string>
     <string name="gesture_action_drawer">App drawer</string>
     <string name="gesture_action_notifications">Notifications</string>
@@ -130,6 +131,8 @@
     <string name="gesture_action_edit_home">Edit home screen</string>
     <string name="gesture_action_alarms">Alarms</string>
     <string name="gesture_action_calendar">Calendar</string>
+    <string name="gesture_action_weather_app">Weather app</string>
+    <string name="gesture_action_refresh_weather">Refresh weather</string>
     <string name="gesture_action_open_app">Open app…</string>
     <string name="gesture_action_missing_app">App not installed</string>
     <string name="app_picker_title">Choose app</string>
@@ -140,6 +143,8 @@
     <string name="lock_unsupported">Locking the screen needs Android 9 or newer</string>
 
     <!-- Weather -->
+    <!-- Web search used when no weather app is installed; the city is appended. -->
+    <string name="weather_search_query">weather</string>
     <string name="weather_search_title">Weather location</string>
     <string name="weather_search_hint">City</string>
     <string name="weather_search_button">Search</string>

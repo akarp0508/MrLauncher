@@ -77,7 +77,6 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     onAppClick = viewModel::launch,
                     onAppLongClick = { viewModel.editHome() },
                     onGesture = viewModel::onGesture,
-                    onWeatherClick = { viewModel.refreshWeather(force = true) },
                     onEditHome = viewModel::editHome,
                     editor = if (screen == Screen.EditHome) {
                         HomeEditor(
