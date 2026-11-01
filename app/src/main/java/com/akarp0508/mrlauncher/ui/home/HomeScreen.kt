@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -46,9 +47,9 @@ fun HomeScreen(
     onWeatherClick: () -> Unit,
 ) {
     val alignment = when (settings.homeAlignment) {
-        LabelAlignment.Start -> Alignment.Start
+        LabelAlignment.Left -> AbsoluteAlignment.Left
         LabelAlignment.Center -> Alignment.CenterHorizontally
-        LabelAlignment.End -> Alignment.End
+        LabelAlignment.Right -> AbsoluteAlignment.Right
     }
     val textAlign = settings.homeAlignment.textAlign
     val position = settings.homeVerticalPosition

@@ -50,7 +50,7 @@ fun AppLabel(
 
 val LabelAlignment.textAlign: TextAlign
     get() = when (this) {
-        LabelAlignment.Start -> TextAlign.Start
+        LabelAlignment.Left -> TextAlign.Left
         LabelAlignment.Center -> TextAlign.Center
-        LabelAlignment.End -> TextAlign.End
+        LabelAlignment.Right -> TextAlign.Right
     }

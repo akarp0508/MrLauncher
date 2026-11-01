@@ -1,6 +1,7 @@
 package com.akarp0508.mrlauncher.data
 
-enum class LabelAlignment { Start, Center, End }
+/** Always physical left/right, regardless of the language's text direction. */
+enum class LabelAlignment { Left, Center, Right }
 
 enum class VerticalPosition { Top, Center, Bottom }
 
@@ -72,13 +73,13 @@ data class LauncherSettings(
     // Home layout
     val showClock: Boolean = true,
     val showDate: Boolean = true,
-    val homeAlignment: LabelAlignment = LabelAlignment.Start,
+    val homeAlignment: LabelAlignment = LabelAlignment.Left,
     val homeVerticalPosition: VerticalPosition = VerticalPosition.Center,
     val itemSpacing: ItemSpacing = ItemSpacing.Normal,
     val showStatusBar: Boolean = true,
 
     // Drawer
-    val drawerAlignment: LabelAlignment = LabelAlignment.Start,
+    val drawerAlignment: LabelAlignment = LabelAlignment.Left,
     val autoLaunchSingleMatch: Boolean = true,
     val autoShowKeyboard: Boolean = true,
 

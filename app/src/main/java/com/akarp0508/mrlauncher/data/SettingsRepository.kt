@@ -35,11 +35,11 @@ class SettingsRepository(private val context: Context) {
             renamedApps = withPrefix(RENAME_PREFIX),
             showClock = this[SHOW_CLOCK] ?: defaults.showClock,
             showDate = this[SHOW_DATE] ?: defaults.showDate,
-            homeAlignment = this[HOME_ALIGNMENT].toEnum(defaults.homeAlignment),
+            homeAlignment = this[HOME_ALIGNMENT].migrateAlignment().toEnum(defaults.homeAlignment),
             homeVerticalPosition = this[HOME_POSITION].toEnum(defaults.homeVerticalPosition),
             itemSpacing = this[ITEM_SPACING].toEnum(defaults.itemSpacing),
             showStatusBar = this[SHOW_STATUS_BAR] ?: defaults.showStatusBar,
-            drawerAlignment = this[DRAWER_ALIGNMENT].toEnum(defaults.drawerAlignment),
+            drawerAlignment = this[DRAWER_ALIGNMENT].migrateAlignment().toEnum(defaults.drawerAlignment),
             autoLaunchSingleMatch = this[AUTO_LAUNCH] ?: defaults.autoLaunchSingleMatch,
             autoShowKeyboard = this[AUTO_KEYBOARD] ?: defaults.autoShowKeyboard,
             font = this[FONT].toEnum(defaults.font),
@@ -100,6 +100,13 @@ class SettingsRepository(private val context: Context) {
 
     private fun <T> MutablePreferences.setOrRemove(key: Preferences.Key<T>, value: T?) {
         if (value == null) remove(key) else this[key] = value
+    }
+
+    /** Alignment used to be stored as Start/End before it became Left/Right. */
+    private fun String?.migrateAlignment(): String? = when (this) {
+        "Start" -> LabelAlignment.Left.name
+        "End" -> LabelAlignment.Right.name
+        else -> this
     }
 
     private inline fun <reified E : Enum<E>> String?.toEnum(default: E): E =

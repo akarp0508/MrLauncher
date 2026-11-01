@@ -26,7 +26,7 @@ Open the project in Android Studio and run the `app` configuration, or from the 
 ./gradlew :app:testDebugUnitTest    # unit tests
 ```
 
-Then press Home on the device and choose MrLauncher as the default (also available under *settings → set as default launcher*).
+Then press Home on the device and choose MrLauncher as the default (also available under *Settings → Set as default launcher*).
 
 ## Permissions
 

@@ -18,9 +18,9 @@ inline fun <reified E : Enum<E>> E.next(): E = enumValues<E>().let { it[(ordinal
 
 val LabelAlignment.label: Int
     @StringRes get() = when (this) {
-        LabelAlignment.Start -> R.string.alignment_start
+        LabelAlignment.Left -> R.string.alignment_left
         LabelAlignment.Center -> R.string.alignment_center
-        LabelAlignment.End -> R.string.alignment_end
+        LabelAlignment.Right -> R.string.alignment_right
     }
 
 val VerticalPosition.label: Int
