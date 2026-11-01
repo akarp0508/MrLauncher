@@ -2,7 +2,7 @@
 
 A simple, low-distraction Android launcher.
 
-No icons, no widgets, no feeds — just a clock, a few apps you pick, and a fast search for everything else. The goal is a home screen that gets you where you meant to go and then gets out of the way.
+No widgets, no feeds — just a clock, a few apps you pick, and a fast search for everything else. The goal is a home screen that gets you where you meant to go and then gets out of the way.
 
 MrLauncher is inspired mostly by [Olauncher](https://github.com/tanujnotes/Olauncher) and similar minimalist launchers. It isn't trying to be a copy: the aim is the same calm, text-only idea, but with a nicer feel and a lot more room to make it your own.
 
@@ -12,8 +12,8 @@ MrLauncher is inspired mostly by [Olauncher](https://github.com/tanujnotes/Olaun
 - **Search-first app drawer** — opens with the keyboard ready; ignores accents (`lodz` finds *Łódź*), matches initials (`gm` finds *Google Maps*), and can launch automatically when only one app matches
 - **Home screen editing** — long-press the home screen to add, remove and drag apps into order
 - **Your apps, your names** — rename and hide apps with a long-press in the drawer; work profile apps are included
-- **Gestures** — swipe up/down/left/right, double tap, and tapping the clock or date can each open the drawer, notifications, quick settings, alarms, calendar, any app, or lock the screen
-- **Layout** — separate left/center/right alignment for the clock, home apps and drawer, where the app list sits, spacing, status bar on/off, and separate text sizes for the clock, date & weather, home apps, drawer and menus
+- **Gestures** — swipe up/down/left/right, double tap, and tapping the clock, date or weather can each open the drawer, notifications, quick settings, alarms, calendar, a weather app, any app, or lock the screen
+- **Layout** — separate left/center/right alignment for the clock, home apps and drawer, where the app list sits, spacing, margins, status bar on/off, and separate text sizes for the clock, date & weather, home apps, drawer and menus
 - **Colors** — text, accent and background colors from presets or any hex value; *auto* text picks light or dark based on what's behind it; separate background opacity for home and the drawer, from bare wallpaper to solid color
 - **Fonts** — any of Android's built-in fonts, or import your own `.ttf` / `.otf`, with a font weight from thin to bold
 - **Weather** — current conditions for a city you choose, from [Open-Meteo](https://open-meteo.com) (free, no account, no location permission), with optional color or monochrome icons

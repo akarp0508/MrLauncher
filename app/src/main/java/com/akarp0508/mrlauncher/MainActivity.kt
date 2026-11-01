@@ -38,9 +38,9 @@ class MainActivity : ComponentActivity() {
         viewModel.refreshWeather()
     }
 
-    /** Coming back to the launcher should always land on the home screen. */
+    /** Coming back to the launcher normally lands on the home screen; see [LauncherViewModel.onHidden]. */
     override fun onStop() {
         super.onStop()
-        viewModel.goHome()
+        viewModel.onHidden()
     }
 }

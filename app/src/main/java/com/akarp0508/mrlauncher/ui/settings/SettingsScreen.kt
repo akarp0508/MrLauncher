@@ -62,6 +62,8 @@ fun SettingsScreen(
     state: LauncherUiState,
     onUpdate: ((LauncherSettings) -> LauncherSettings) -> Unit,
     onImportFont: (Uri) -> Unit,
+    /** Called before opening the file picker, so returning from it comes back here. */
+    keepScreenOnReturn: () -> Unit,
     searchWeatherLocations: suspend (String) -> List<WeatherLocation>,
     onEditHome: () -> Unit,
     onSetDefaultLauncher: () -> Unit,
@@ -124,13 +126,13 @@ fun SettingsScreen(
             }
         }
         item {
-            MarginRow(R.string.settings_side_margin, settings.homeSideMargin, max = 64) { delta ->
-                onUpdate { it.copy(homeSideMargin = (it.homeSideMargin + delta).coerceIn(0, 64)) }
+            MarginRow(R.string.settings_side_margin, settings.homeSideMargin, MAX_SIDE_MARGIN) { delta ->
+                onUpdate { it.copy(homeSideMargin = it.homeSideMargin.stepMargin(delta, MAX_SIDE_MARGIN)) }
             }
         }
         item {
-            MarginRow(R.string.settings_vertical_margin, settings.homeVerticalMargin, max = 96) { delta ->
-                onUpdate { it.copy(homeVerticalMargin = (it.homeVerticalMargin + delta).coerceIn(0, 96)) }
+            MarginRow(R.string.settings_vertical_margin, settings.homeVerticalMargin, MAX_VERTICAL_MARGIN) { delta ->
+                onUpdate { it.copy(homeVerticalMargin = it.homeVerticalMargin.stepMargin(delta, MAX_VERTICAL_MARGIN)) }
             }
         }
         item {
@@ -151,8 +153,8 @@ fun SettingsScreen(
             }
         }
         item {
-            MarginRow(R.string.settings_side_margin, settings.drawerSideMargin, max = 64) { delta ->
-                onUpdate { it.copy(drawerSideMargin = (it.drawerSideMargin + delta).coerceIn(0, 64)) }
+            MarginRow(R.string.settings_side_margin, settings.drawerSideMargin, MAX_SIDE_MARGIN) { delta ->
+                onUpdate { it.copy(drawerSideMargin = it.drawerSideMargin.stepMargin(delta, MAX_SIDE_MARGIN)) }
             }
         }
         item {
@@ -261,9 +263,11 @@ fun SettingsScreen(
         item {
             ToggleRow(R.string.settings_weather, settings.showWeather) {
                 if (!settings.showWeather && settings.weatherLocation == null) {
+                    // Nothing to show yet; picking a place turns weather on.
                     dialog = SettingsDialog.WeatherLocationPicker
+                } else {
+                    onUpdate { it.copy(showWeather = !it.showWeather) }
                 }
-                onUpdate { it.copy(showWeather = !it.showWeather) }
             }
         }
         item {
@@ -311,6 +315,10 @@ fun SettingsScreen(
     }
 
     val fontPreviewStyle = MaterialTheme.typography.titleLarge
+    // An imported font is read from disk, so resolve the previews once per file.
+    val fontFamilies = remember(settings.customFontPath) {
+        FontChoice.entries.associateWith { fontFamilyFor(it, settings.customFontPath) }
+    }
     when (val current = dialog) {
         null -> Unit
         SettingsDialog.Font -> OptionDialog(
@@ -319,7 +327,7 @@ fun SettingsScreen(
             options = FontChoice.entries.filter { it != FontChoice.Custom || settings.customFontPath != null },
             selected = settings.font,
             label = { stringResource(it.label) },
-            optionStyle = { fontPreviewStyle.copy(fontFamily = fontFamilyFor(it, settings.customFontPath)) },
+            optionStyle = { fontPreviewStyle.copy(fontFamily = fontFamilies.getValue(it)) },
             onSelect = { font ->
                 onUpdate { it.copy(font = font) }
                 dialog = null
@@ -327,6 +335,7 @@ fun SettingsScreen(
             onDismiss = { dialog = null },
             extra = stringResource(R.string.font_import) to {
                 dialog = null
+                keepScreenOnReturn()
                 fontPicker.launch(FontMimeTypes)
             },
         )
@@ -342,24 +351,21 @@ fun SettingsScreen(
             },
             onDismiss = { dialog = null },
         )
-        SettingsDialog.Weight -> {
-            val family = remember(settings.font, settings.customFontPath) {
-                fontFamilyFor(settings.font, settings.customFontPath)
-            }
-            OptionDialog(
-                title = stringResource(R.string.settings_font_weight),
-                options = TextWeight.entries,
-                selected = settings.textWeight,
-                label = { stringResource(it.label) },
-                // Preview in the chosen font, so fonts without a given weight show that honestly.
-                optionStyle = { fontPreviewStyle.copy(fontFamily = family, fontWeight = FontWeight(it.value)) },
-                onSelect = { weight ->
-                    onUpdate { it.copy(textWeight = weight) }
-                    dialog = null
-                },
-                onDismiss = { dialog = null },
-            )
-        }
+        SettingsDialog.Weight -> OptionDialog(
+            title = stringResource(R.string.settings_font_weight),
+            options = TextWeight.entries,
+            selected = settings.textWeight,
+            label = { stringResource(it.label) },
+            // Preview in the chosen font, so fonts without a given weight show that honestly.
+            optionStyle = {
+                fontPreviewStyle.copy(fontFamily = fontFamilies.getValue(settings.font), fontWeight = FontWeight(it.value))
+            },
+            onSelect = { weight ->
+                onUpdate { it.copy(textWeight = weight) }
+                dialog = null
+            },
+            onDismiss = { dialog = null },
+        )
         is SettingsDialog.GestureActionPicker -> OptionDialog(
             title = stringResource(current.gesture.label),
             options = GestureAction.simpleActions,
@@ -437,6 +443,10 @@ private fun MarginRow(@StringRes title: Int, value: Int, max: Int, onStep: (delt
 }
 
 private const val MARGIN_STEP = 4
+private const val MAX_SIDE_MARGIN = 64
+private const val MAX_VERTICAL_MARGIN = 96
+
+private fun Int.stepMargin(delta: Int, max: Int) = (this + delta).coerceIn(0, max)
 
 /** Steps by [delta] and rounds to one decimal, so repeated taps don't drift (0.7999…). */
 private fun stepped(value: Float, delta: Float, min: Float, max: Float): Float =

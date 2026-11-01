@@ -99,17 +99,24 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     onOpenSettings = viewModel::openSettings,
                     alignment = state.settings.drawerAlignment,
                     autoShowKeyboard = state.settings.autoShowKeyboard,
-                icons = state.settings.drawerIcons,
-                sideMargin = state.settings.drawerSideMargin.dp,
+                    icons = state.settings.drawerIcons,
+                    sideMargin = state.settings.drawerSideMargin.dp,
                 )
                 Screen.Settings -> SettingsScreen(
                     state = state,
                     onUpdate = viewModel::updateSettings,
                     onImportFont = viewModel::importFont,
+                    keepScreenOnReturn = viewModel::keepScreenOnReturn,
                     searchWeatherLocations = viewModel::searchWeatherLocations,
                     onEditHome = viewModel::editHome,
-                    onSetDefaultLauncher = { SystemActions.openDefaultLauncherSettings(context) },
-                    onOpenAccessibilitySettings = { SystemActions.openAccessibilitySettings(context) },
+                    onSetDefaultLauncher = {
+                        viewModel.keepScreenOnReturn()
+                        SystemActions.openDefaultLauncherSettings(context)
+                    },
+                    onOpenAccessibilitySettings = {
+                        viewModel.keepScreenOnReturn()
+                        SystemActions.openAccessibilitySettings(context)
+                    },
                 )
             }
         }

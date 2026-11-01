@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +33,6 @@ import com.akarp0508.mrlauncher.ui.components.homeGestures
 import com.akarp0508.mrlauncher.ui.components.horizontal
 import com.akarp0508.mrlauncher.ui.components.textAlign
 import com.akarp0508.mrlauncher.ui.theme.LauncherTheme
-import kotlinx.coroutines.delay
 import java.util.Date
 
 // Edit mode puts its controls in the side margins and its toolbar in the top margin, so it needs
@@ -138,12 +135,7 @@ private fun Header(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val now by produceState(System.currentTimeMillis()) {
-        while (true) {
-            value = System.currentTimeMillis()
-            delay(60_000 - value % 60_000) // tick on the minute
-        }
-    }
+    val now = rememberCurrentTime()
     val time = remember(now) { DateFormat.getTimeFormat(context).format(Date(now)) }
     val date = remember(now, dateStyle) { dateStyle.format(now) }
     val dim = LauncherTheme.colors.textDim

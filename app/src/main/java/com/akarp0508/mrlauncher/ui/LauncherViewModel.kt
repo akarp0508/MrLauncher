@@ -64,6 +64,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     private val weather = MutableStateFlow<Weather?>(null)
     private var weatherJob: Job? = null
     private var lastWeatherFetch = 0L
+    private var keepScreenOnReturn = false
 
     private val labelledApps = combine(
         // A change to the app list may come with new icons (e.g. an app update).
@@ -112,7 +113,12 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             settingsRepository.settings
                 .map { Triple(it.showWeather, it.weatherLocation, it.temperatureUnit) }
                 .distinctUntilChanged()
-                .collect { refreshWeather(force = true) }
+                .collect {
+                    // Drop the reading for the previous city/unit rather than show it until (or,
+                    // if the request fails, instead of) the new one.
+                    weather.value = null
+                    refreshWeather(force = true)
+                }
         }
     }
 
@@ -131,6 +137,21 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     fun goHome() {
         screen.value = Screen.Home
         query.value = ""
+        keepScreenOnReturn = false
+    }
+
+    /**
+     * Call before opening something the user will come back from (a file picker, a system settings
+     * page), so they return to the same screen instead of home. Without this, leaving resets to
+     * home, which also drops results such as a picked font file.
+     */
+    fun keepScreenOnReturn() {
+        keepScreenOnReturn = true
+    }
+
+    /** The launcher went out of view. */
+    fun onHidden() {
+        if (keepScreenOnReturn) keepScreenOnReturn = false else goHome()
     }
 
     fun onQueryChange(value: String) {

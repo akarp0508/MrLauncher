@@ -157,8 +157,7 @@ class SettingsRepository(private val context: Context) {
     private inline fun <reified E : Enum<E>> String?.toEnumOrNull(): E? =
         enumValues<E>().firstOrNull { it.name == this }
 
-    private inline fun <reified E : Enum<E>> String?.toEnum(default: E): E =
-        enumValues<E>().firstOrNull { it.name == this } ?: default
+    private inline fun <reified E : Enum<E>> String?.toEnum(default: E): E = toEnumOrNull<E>() ?: default
 
     private companion object {
         // Package and class names can't contain a newline, so it's a safe list separator.
