@@ -12,10 +12,11 @@ import kotlin.math.abs
 private val SwipeThreshold = 56.dp
 
 /**
- * Detects the home-screen swipes (by dominant direction, once per gesture) and double taps.
- * Children with click handlers still work: a drag past touch slop cancels their click.
+ * Detects the home-screen swipes (by dominant direction, once per gesture), double taps and
+ * long presses. Children with click handlers still work: a drag past touch slop cancels their
+ * click. A long press on a child may fire [onLongPress] as well as the child's own handler.
  */
-fun Modifier.homeGestures(onGesture: (Gesture) -> Unit): Modifier = this
+fun Modifier.homeGestures(onGesture: (Gesture) -> Unit, onLongPress: () -> Unit): Modifier = this
     .pointerInput(onGesture) {
         val threshold = SwipeThreshold.toPx()
         var total = Offset.Zero
@@ -37,6 +38,9 @@ fun Modifier.homeGestures(onGesture: (Gesture) -> Unit): Modifier = this
             total += dragAmount
         }
     }
-    .pointerInput(onGesture) {
-        detectTapGestures(onDoubleTap = { onGesture(Gesture.DoubleTap) })
+    .pointerInput(onGesture, onLongPress) {
+        detectTapGestures(
+            onDoubleTap = { onGesture(Gesture.DoubleTap) },
+            onLongPress = { onLongPress() },
+        )
     }

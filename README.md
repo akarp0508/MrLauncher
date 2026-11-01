@@ -10,7 +10,8 @@ MrLauncher is inspired mostly by [Olauncher](https://github.com/tanujnotes/Olaun
 
 - **Home screen** — clock, date, optional weather, and your pinned apps as plain text
 - **Search-first app drawer** — opens with the keyboard ready; ignores accents (`lodz` finds *Łódź*), matches initials (`gm` finds *Google Maps*), and can launch automatically when only one app matches
-- **Your apps, your names** — pin, reorder, rename and hide apps with a long-press; work profile apps are included
+- **Home screen editing** — long-press the home screen to add, remove and drag apps into order
+- **Your apps, your names** — rename and hide apps with a long-press in the drawer; work profile apps are included
 - **Gestures** — swipe up/down/left/right, double tap, and tapping the clock or date can each open the drawer, notifications, quick settings, alarms, calendar, any app, or lock the screen
 - **Layout** — alignment for home and drawer, where the app list sits, spacing, status bar on/off, and separate text sizes for the clock, date & weather, home apps, drawer and menus
 - **Colors** — text, accent and background colors from presets or any hex value; *auto* text picks light or dark based on what's behind it; separate background opacity for home and the drawer, from bare wallpaper to solid color

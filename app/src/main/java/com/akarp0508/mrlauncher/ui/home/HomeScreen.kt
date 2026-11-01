@@ -45,6 +45,7 @@ fun HomeScreen(
     onAppLongClick: (AppInfo) -> Unit,
     onGesture: (Gesture) -> Unit,
     onWeatherClick: () -> Unit,
+    onEditHome: () -> Unit,
 ) {
     val alignment = when (settings.homeAlignment) {
         LabelAlignment.Left -> AbsoluteAlignment.Left
@@ -58,7 +59,7 @@ fun HomeScreen(
         horizontalAlignment = alignment,
         modifier = Modifier
             .fillMaxSize()
-            .homeGestures(onGesture)
+            .homeGestures(onGesture, onLongPress = onEditHome)
             .systemBarsPadding()
             .padding(horizontal = 32.dp, vertical = 48.dp),
     ) {

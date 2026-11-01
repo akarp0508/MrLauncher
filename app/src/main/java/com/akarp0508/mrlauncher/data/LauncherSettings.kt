@@ -25,6 +25,7 @@ sealed interface GestureAction {
     data object QuickSettings : GestureAction { override val id = "quick_settings" }
     data object LockScreen : GestureAction { override val id = "lock" }
     data object OpenSettings : GestureAction { override val id = "settings" }
+    data object EditHome : GestureAction { override val id = "edit_home" }
     data object Alarms : GestureAction { override val id = "alarms" }
     data object Calendar : GestureAction { override val id = "calendar" }
     data class OpenApp(val appKey: String) : GestureAction {
@@ -36,7 +37,7 @@ sealed interface GestureAction {
 
         /** Everything except [OpenApp], which needs an app picked. */
         val simpleActions = listOf(
-            None, OpenDrawer, Notifications, QuickSettings, LockScreen, OpenSettings, Alarms, Calendar,
+            None, OpenDrawer, Notifications, QuickSettings, LockScreen, OpenSettings, EditHome, Alarms, Calendar,
         )
 
         fun fromId(id: String?): GestureAction? = when {

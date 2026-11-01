@@ -24,6 +24,7 @@ import com.akarp0508.mrlauncher.system.SystemActions
 import com.akarp0508.mrlauncher.ui.components.AppActionsDialog
 import com.akarp0508.mrlauncher.ui.components.RenameDialog
 import com.akarp0508.mrlauncher.ui.drawer.AppDrawer
+import com.akarp0508.mrlauncher.ui.home.EditHomeScreen
 import com.akarp0508.mrlauncher.ui.home.HomeScreen
 import com.akarp0508.mrlauncher.ui.settings.SettingsScreen
 import com.akarp0508.mrlauncher.ui.theme.LauncherSurface
@@ -67,9 +68,19 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     weather = state.weather,
                     settings = state.settings,
                     onAppClick = viewModel::launch,
-                    onAppLongClick = { actionsFor = it },
+                    onAppLongClick = { viewModel.editHome() },
                     onGesture = viewModel::onGesture,
                     onWeatherClick = { viewModel.refreshWeather(force = true) },
+                    onEditHome = viewModel::editHome,
+                )
+                Screen.EditHome -> EditHomeScreen(
+                    homeApps = state.homeApps,
+                    availableApps = state.allApps.filterNot { it.key in state.settings.hiddenApps },
+                    alignment = state.settings.homeAlignment,
+                    onReorder = viewModel::setHomeOrder,
+                    onToggleApp = viewModel::toggleHomeApp,
+                    onAppClick = { actionsFor = it },
+                    onDone = viewModel::goHome,
                 )
                 Screen.Drawer -> AppDrawer(
                     apps = state.drawerApps,
@@ -86,6 +97,7 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
                     onUpdate = viewModel::updateSettings,
                     onImportFont = viewModel::importFont,
                     searchWeatherLocations = viewModel::searchWeatherLocations,
+                    onEditHome = viewModel::editHome,
                     onSetDefaultLauncher = { SystemActions.openDefaultLauncherSettings(context) },
                     onOpenAccessibilitySettings = { SystemActions.openAccessibilitySettings(context) },
                 )
@@ -119,7 +131,8 @@ private fun LauncherContent(state: LauncherUiState, viewModel: LauncherViewModel
 
 private fun LauncherSettings.backgroundOpacity(screen: Screen): Float = when (screen) {
     Screen.Home -> homeBackgroundAlpha
-    Screen.Drawer, Screen.Settings -> drawerBackgroundAlpha
+    // Edit mode is a working screen, so it gets the drawer's (usually more opaque) background.
+    Screen.EditHome, Screen.Drawer, Screen.Settings -> drawerBackgroundAlpha
 }
 
 @Composable

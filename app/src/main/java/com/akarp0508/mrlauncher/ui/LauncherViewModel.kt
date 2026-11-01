@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-enum class Screen { Home, Drawer, Settings }
+enum class Screen { Home, EditHome, Drawer, Settings }
 
 data class LauncherUiState(
     /** False until settings are read from disk, so we don't flash default colors. */
@@ -120,6 +120,10 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         screen.value = Screen.Settings
     }
 
+    fun editHome() {
+        screen.value = Screen.EditHome
+    }
+
     fun goHome() {
         screen.value = Screen.Home
         query.value = ""
@@ -144,6 +148,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             GestureAction.None -> Unit
             GestureAction.OpenDrawer -> openDrawer()
             GestureAction.OpenSettings -> openSettings()
+            GestureAction.EditHome -> editHome()
             GestureAction.Notifications -> SystemActions.expandNotifications(context)
             GestureAction.QuickSettings -> SystemActions.expandQuickSettings(context)
             GestureAction.LockScreen -> SystemActions.lockScreen(context)
@@ -158,8 +163,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         when (action) {
             AppAction.AddToHome -> updateSettings { it.copy(homeApps = it.homeApps + app.key) }
             AppAction.RemoveFromHome -> updateSettings { it.copy(homeApps = it.homeApps - app.key) }
-            AppAction.MoveUp -> updateSettings { it.copy(homeApps = it.homeApps.moved(app.key, -1)) }
-            AppAction.MoveDown -> updateSettings { it.copy(homeApps = it.homeApps.moved(app.key, 1)) }
             AppAction.Hide -> updateSettings {
                 it.copy(hiddenApps = it.hiddenApps + app.key, homeApps = it.homeApps - app.key)
             }
@@ -167,6 +170,12 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             AppAction.Uninstall -> appRepository.uninstall(app)
             AppAction.Rename -> Unit // Needs input; handled by the rename dialog via [rename].
         }
+    }
+
+    fun setHomeOrder(keys: List<String>) = updateSettings { it.copy(homeApps = keys) }
+
+    fun toggleHomeApp(app: AppInfo) = updateSettings {
+        it.copy(homeApps = if (app.key in it.homeApps) it.homeApps - app.key else it.homeApps + app.key)
     }
 
     /** A blank [label] restores the system label. */
@@ -223,11 +232,4 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     private companion object {
         const val WEATHER_TTL_MS = 30 * 60 * 1000L
     }
-}
-
-private fun List<String>.moved(item: String, offset: Int): List<String> {
-    val from = indexOf(item)
-    val to = from + offset
-    if (from == -1 || to !in indices) return this
-    return toMutableList().apply { add(to, removeAt(from)) }
 }

@@ -78,6 +78,7 @@ fun GestureAction.label(apps: List<AppInfo>): String = when (this) {
     GestureAction.QuickSettings -> stringResource(R.string.gesture_action_quick_settings)
     GestureAction.LockScreen -> stringResource(R.string.gesture_action_lock)
     GestureAction.OpenSettings -> stringResource(R.string.gesture_action_settings)
+    GestureAction.EditHome -> stringResource(R.string.gesture_action_edit_home)
     GestureAction.Alarms -> stringResource(R.string.gesture_action_alarms)
     GestureAction.Calendar -> stringResource(R.string.gesture_action_calendar)
     is GestureAction.OpenApp -> apps.firstOrNull { it.key == appKey }?.label

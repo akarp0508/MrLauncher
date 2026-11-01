@@ -57,6 +57,7 @@ fun SettingsScreen(
     onUpdate: ((LauncherSettings) -> LauncherSettings) -> Unit,
     onImportFont: (Uri) -> Unit,
     searchWeatherLocations: suspend (String) -> List<WeatherLocation>,
+    onEditHome: () -> Unit,
     onSetDefaultLauncher: () -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
 ) {
@@ -81,6 +82,7 @@ fun SettingsScreen(
         }
 
         item { SectionHeader(R.string.settings_section_home) }
+        item { SettingRow(R.string.settings_edit_home, value = null, onClick = onEditHome) }
         item { ToggleRow(R.string.settings_clock, settings.showClock) { onUpdate { it.copy(showClock = !it.showClock) } } }
         item { ToggleRow(R.string.settings_date, settings.showDate) { onUpdate { it.copy(showDate = !it.showDate) } } }
         item {
