@@ -134,6 +134,7 @@
     <string name="gesture_action_settings">Launcher settings</string>
     <string name="gesture_action_edit_home">Edit home screen</string>
     <string name="gesture_action_alarms">Alarms</string>
+    <string name="alarms_unavailable">No clock app found</string>
     <string name="gesture_action_calendar">Calendar</string>
     <string name="gesture_action_weather_app">Weather app</string>
     <string name="gesture_action_refresh_weather">Refresh weather</string>

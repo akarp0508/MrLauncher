@@ -18,7 +18,24 @@ object SystemActions {
 
     fun expandQuickSettings(context: Context) = statusBar(context, "expandSettingsPanel")
 
-    fun openAlarms(context: Context) = start(context, Intent(AlarmClock.ACTION_SHOW_ALARMS))
+    /** The standard intent first; some clock apps don't handle it, so fall back to launching one directly. */
+    fun openAlarms(context: Context) {
+        if (start(context, Intent(AlarmClock.ACTION_SHOW_ALARMS))) return
+        val launch = ClockApps.firstNotNullOfOrNull { context.packageManager.getLaunchIntentForPackage(it) }
+        if (launch == null || !start(context, launch)) {
+            Toast.makeText(context, R.string.alarms_unavailable, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private val ClockApps = listOf(
+        "com.google.android.deskclock",
+        "com.android.deskclock",
+        "com.sec.android.app.clockpackage", // Samsung
+        "com.oneplus.deskclock",
+        "com.coloros.alarmclock", // Oppo/Realme
+        "com.huawei.deskclock",
+        "com.motorola.timeweatherwidget",
+    )
 
     fun openCalendar(context: Context) = start(
         context,
