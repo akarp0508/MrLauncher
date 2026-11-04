@@ -1,10 +1,10 @@
-# MrLauncher
+# koilauncher
 
 A simple, low-distraction Android launcher.
 
 No widgets, no feeds — just a clock, a few apps you pick, and a fast search for everything else. The goal is a home screen that gets you where you meant to go and then gets out of the way.
 
-MrLauncher is inspired mostly by [Olauncher](https://github.com/tanujnotes/Olauncher) and similar minimalist launchers. It isn't trying to be a copy: the aim is the same calm, text-only idea, but with a nicer feel and a lot more room to make it your own.
+koilauncher is inspired mostly by [Olauncher](https://github.com/tanujnotes/Olauncher) and similar minimalist launchers. It isn't trying to be a copy: the aim is the same calm, text-only idea, but with a nicer feel and a lot more room to make it your own.
 
 ## Features
 
@@ -28,7 +28,7 @@ Open the project in Android Studio and run the `app` configuration, or from the 
 ./gradlew :app:testDebugUnitTest    # unit tests
 ```
 
-Then press Home on the device and choose MrLauncher as the default (also available under *Settings → Set as default launcher*).
+Then press Home on the device and choose koilauncher as the default (also available under *Settings → Set as default launcher*).
 
 ## Permissions
 

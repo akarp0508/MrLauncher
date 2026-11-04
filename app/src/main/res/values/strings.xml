@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MrLauncher</string>
+    <string name="app_name">koilauncher</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_save">Save</string>
     <string name="percent">%1$d%%</string>
@@ -142,9 +142,9 @@
     <string name="gesture_action_missing_app">App not installed</string>
     <string name="app_picker_title">Choose app</string>
 
-    <string name="lock_service_label">MrLauncher screen lock</string>
-    <string name="lock_service_description">Lets MrLauncher lock the screen when you use a "lock screen" gesture. It does not read or watch anything on screen.</string>
-    <string name="lock_enable_prompt">Turn on "MrLauncher screen lock" to use this gesture</string>
+    <string name="lock_service_label">koilauncher screen lock</string>
+    <string name="lock_service_description">Lets koilauncher lock the screen when you use a "lock screen" gesture. It does not read or watch anything on screen.</string>
+    <string name="lock_enable_prompt">Turn on "koilauncher screen lock" to use this gesture</string>
     <string name="lock_unsupported">Locking the screen needs Android 9 or newer</string>
 
     <!-- Weather -->

@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.akarp0508.mrlauncher"
+    namespace = "com.akarp0508.koilauncher"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.akarp0508.mrlauncher"
+        applicationId = "com.akarp0508.koilauncher"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MrLauncher"
+rootProject.name = "koilauncher"
 include(":app")

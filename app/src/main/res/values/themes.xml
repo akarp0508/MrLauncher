@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Transparent window so the system wallpaper shows through. -->
-    <style name="Theme.MrLauncher" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.KoiLauncher" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowShowWallpaper">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
