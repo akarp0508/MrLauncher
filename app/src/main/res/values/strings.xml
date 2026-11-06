@@ -30,6 +30,10 @@
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
+    <string name="settings_about">About</string>
+    <string name="about_text">A calm, text-first launcher. Built for fun and for myself, shared in case it suits you too.</string>
+    <string name="about_author">Made by akarp0508</string>
+    <string name="about_github_url" translatable="false">https://github.com/akarp0508</string>
     <string name="settings_hidden_apps">Hidden apps — tap to unhide</string>
     <string name="settings_page_home">Home screen</string>
     <string name="settings_page_home_summary">Apps, layout, icons, margins</string>

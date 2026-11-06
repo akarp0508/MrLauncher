@@ -4,10 +4,12 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +29,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -109,6 +113,7 @@ fun SettingsScreen(
             items(SettingsPage.entries) { entry ->
                 PageLink(entry, summary = pageSummary(entry, settings)) { page = entry }
             }
+            item { About() }
         } else {
             settingsPage(current, scope)
         }
@@ -222,7 +227,16 @@ fun SettingsScreen(
 private fun PageTitle(page: SettingsPage?, onBack: () -> Unit) {
     val style = MaterialTheme.typography.headlineSmall
     if (page == null) {
-        Text(stringResource(R.string.settings_title), style = style, modifier = Modifier.padding(top = 24.dp, bottom = 16.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(top = 24.dp, bottom = 16.dp),
+        ) {
+            Image(painterResource(R.drawable.ic_koi_logo), contentDescription = null, modifier = Modifier.size(40.dp))
+            Column(Modifier.padding(start = 12.dp)) {
+                Text(stringResource(R.string.app_name), style = style)
+                Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.labelLarge, color = LauncherTheme.colors.textDim)
+            }
+        }
         return
     }
     Row(
@@ -233,6 +247,28 @@ private fun PageTitle(page: SettingsPage?, onBack: () -> Unit) {
     ) {
         Text("‹ ", style = style, color = LauncherTheme.colors.accent)
         Text(stringResource(page.title), style = style)
+    }
+}
+
+/** Who made the launcher, with a link to their GitHub. */
+@Composable
+private fun About() {
+    val uriHandler = LocalUriHandler.current
+    val url = stringResource(R.string.about_github_url)
+    Column(Modifier.padding(top = 32.dp)) {
+        SectionHeader(R.string.settings_about)
+        Text(stringResource(R.string.about_text), style = MaterialTheme.typography.bodyMedium)
+        Text(
+            stringResource(R.string.about_author),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+        Text(
+            url.removePrefix("https://"),
+            style = MaterialTheme.typography.bodyLarge,
+            color = LauncherTheme.colors.accent,
+            modifier = Modifier.clickable { uriHandler.openUri(url) }.padding(vertical = 8.dp),
+        )
     }
 }
 
