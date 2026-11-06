@@ -130,9 +130,9 @@ data class LauncherSettings(
     val drawerTextScale: Float = 1f,
     /** ARGB, or [AUTO_TEXT_COLOR]. */
     val textColor: Int = AUTO_TEXT_COLOR,
-    val accentColor: Int = 0xFFFFB86C.toInt(),
+    val accentColor: Int = 0xFFC6F432.toInt(),
     /** Opaque ARGB; drawn over the wallpaper at the per-screen opacities below. */
-    val backgroundColor: Int = 0xFF000000.toInt(),
+    val backgroundColor: Int = 0xFF111318.toInt(),
     /** 0 = bare wallpaper, 1 = solid [backgroundColor]. */
     val homeBackgroundAlpha: Float = 0f,
     val drawerBackgroundAlpha: Float = 0.65f,
